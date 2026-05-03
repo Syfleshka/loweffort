@@ -1,0 +1,121 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ──────────────────────────────────────────────
+// better-auth: User / Session / Account / Verification
+// Сгенерировано по схеме better-auth. При обновлении плагинов
+// перегенерировать через: npx @better-auth/cli generate
+// ──────────────────────────────────────────────
+
+model User {
+  id            String   @id @default(cuid())
+  email         String   @unique
+  emailVerified Boolean  @default(false)
+  name          String
+  image         String?
+  username      String   @unique
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  sessions   Session[]
+  accounts   Account[]
+  scores     Score[]
+  matches    MatchPlayer[]
+  wonMatches Match[]       @relation("MatchWinner")
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Account {
+  id                    String    @id @default(cuid())
+  userId                String
+  accountId             String
+  providerId            String
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Verification {
+  id         String    @id @default(cuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime? @default(now())
+  updatedAt  DateTime? @updatedAt
+}
+
+// ──────────────────────────────────────────────
+// Доменные модели
+// ──────────────────────────────────────────────
+
+model Game {
+  id          String  @id @default(cuid())
+  slug        String  @unique
+  title       String
+  description String?
+  thumbnail   String?
+  maxPlayers  Int     @default(1)
+
+  scores  Score[]
+  matches Match[]
+}
+
+model Score {
+  id        String   @id @default(cuid())
+  userId    String
+  gameId    String
+  score     Int
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  game Game @relation(fields: [gameId], references: [id], onDelete: Cascade)
+}
+
+model Match {
+  id        String   @id @default(cuid())
+  gameId    String
+  status    String   @default("waiting") // waiting, active, finished
+  state     Json?
+  winnerId  String?
+  createdAt DateTime @default(now())
+
+  game    Game          @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  winner  User?         @relation("MatchWinner", fields: [winnerId], references: [id])
+  players MatchPlayer[]
+}
+
+model MatchPlayer {
+  matchId  String
+  userId   String
+  joinedAt DateTime @default(now())
+
+  match Match @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([matchId, userId])
+}
