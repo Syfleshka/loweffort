@@ -110,14 +110,29 @@ PORT=3000
 
 Источник истины — [backend/src/types/index.ts](backend/src/types/index.ts). Эти же типы используются и фронтендом (импортируются напрямую или копируются — TBD на этапе 3).
 
-## Nginx конфиг
+## Деплой
 
-Хранится отдельно от репозитория, на VPS в `/etc/nginx/sites-available/gamesite`. Шаблон лежит в `deploy/nginx.conf` (TBD).
+Прод: VPS `185.221.154.105`, домен `loweffort.site`, проект клонирован в `/home/deploy/loweffort`.
 
-Ключевые `location`:
-- `/` → раздача `frontend/dist` со fallback на `index.html`
-- `/api/` → proxy на `localhost:3000`
-- `/socket.io/` → proxy на `localhost:3000` с WebSocket upgrade
+Артефакты в репо:
+- [deploy/bootstrap.sh](deploy/bootstrap.sh) — одноразовая первичная настройка на сервере
+- [deploy/deploy.sh](deploy/deploy.sh) — инкрементальный деплой (вызывается из CI и вручную)
+- [deploy/init-db.sql](deploy/init-db.sql) — создание Postgres-юзера/БД
+- [deploy/nginx-snippet.conf](deploy/nginx-snippet.conf) — блоки для существующего конфига Nginx
+- [backend/ecosystem.config.cjs](backend/ecosystem.config.cjs) — манифест PM2
+- [.github/workflows/deploy.yml](.github/workflows/deploy.yml) — авто-деплой на push в `main`
+
+### Первичная настройка (один раз)
+
+См. [deploy/bootstrap.sh](deploy/bootstrap.sh) — скрипт ведёт за руку.
+
+### GitHub Actions
+
+Workflow слушает push в `main` и `workflow_dispatch`. На сервер заходит SSH-ключом из секрета `DEPLOY_SSH_KEY`. Чтобы поднять:
+
+1. На локальной машине: `ssh-keygen -t ed25519 -f ~/.ssh/loweffort_deploy -C "github-actions"` (без passphrase)
+2. Публичную часть `~/.ssh/loweffort_deploy.pub` добавить в `~deploy/.ssh/authorized_keys` на VPS
+3. Приватную часть (`~/.ssh/loweffort_deploy`) скопировать в GitHub: Repo → Settings → Secrets and variables → Actions → New repository secret → имя `DEPLOY_SSH_KEY`
 
 ## Соглашения
 

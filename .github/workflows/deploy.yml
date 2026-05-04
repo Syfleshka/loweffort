@@ -1,0 +1,26 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:  # ручной запуск из GitHub UI (вкладка Actions)
+
+concurrency:
+  # Если прилетел новый push, пока идёт предыдущий деплой —
+  # старый отменяется, гоняется только последний.
+  group: deploy-prod
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: SSH and run deploy.sh
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: 185.221.154.105
+          username: deploy
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script_stop: true  # упасть на первой ошибке
+          script: bash /home/deploy/loweffort/deploy/deploy.sh
