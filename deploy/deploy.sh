@@ -32,6 +32,8 @@ echo "▶ Frontend: install + build"
 cd "$PROJECT_DIR/frontend"
 npm ci
 npm run build
+# Права для Nginx (www-data): он должен читать dist/, иначе 500 на index.html.
+chmod -R o+rX dist
 # Nginx раздаёт frontend/dist напрямую, рестарт не нужен.
 
 # ─── PM2 ───────────────────────────────────────────────────────
