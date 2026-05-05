@@ -3,3 +3,13 @@ node_modules
 .env
 
 /src/generated/prisma
+/dist/lib/auth.js
+/dist/routes/games.js
+/dist/socket/index.js
+/dist/types/index.js
+/dist/index.js
+/dist/socket/match.js
+/dist/routes/matches.js
+/dist/lib/prisma.js
+/dist/routes/scores.js
+/dist/lib/session.js
