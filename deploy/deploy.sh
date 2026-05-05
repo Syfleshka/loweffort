@@ -9,6 +9,12 @@
 
 set -euo pipefail
 
+# Подгружаем nvm — non-interactive SSH сессии (GitHub Actions) не читают .bashrc,
+# где обычно прописан nvm, поэтому npm/node/pm2 без этого не находятся.
+export NVM_DIR="$HOME/.nvm"
+# shellcheck disable=SC1091
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
 PROJECT_DIR="${PROJECT_DIR:-/home/deploy/loweffort}"
 BRANCH="${BRANCH:-main}"
 PM2_APP="loweffort-api"
