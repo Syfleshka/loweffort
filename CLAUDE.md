@@ -1,4 +1,6 @@
-# Gamesite — Игровой портал
+# Gamesite (`loweffort`) — Игровой портал
+
+GitHub: [Syfleshka/loweffort](https://github.com/Syfleshka/loweffort) · Прод: https://loweffort.site
 
 ## Описание
 Сайт для веб-игр с поддержкой одиночного и мультиплеерного режима.
@@ -15,52 +17,65 @@
 ### Backend
 - Node.js + Fastify 5 + TypeScript (ESM)
 - better-auth — аутентификация (email/пароль, OAuth). Свои таблицы (`Account`, `Verification`) генерируются better-auth CLI.
-- Prisma 7 — ORM + миграции (конфиг в `backend/prisma.config.ts`)
+- Prisma 7 — ORM + миграции (конфиг в [backend/prisma.config.ts](backend/prisma.config.ts))
 - Socket.io — мультиплеер и realtime лидерборды
 - PostgreSQL — база данных
 
 ### Инфраструктура (VPS)
-- Nginx — reverse proxy + раздача статики
-- PM2 — process manager
-- Let's Encrypt — HTTPS
+- VPS `185.221.154.105`, домен `loweffort.site`, проект клонирован в `/home/deploy/loweffort`
+- Nginx — reverse proxy + раздача статики, конфиг в `/etc/nginx/sites-available/default`
+- PM2 — process manager (запускает бэкенд из [backend/ecosystem.config.cjs](backend/ecosystem.config.cjs))
+- Let's Encrypt — HTTPS (managed by Certbot)
+- Node.js через nvm у пользователя `deploy`
 
-## Целевая структура проекта
+## Структура репозитория
 
-> Это **план**. Папки `routes/`, `socket/`, `pages/`, `components/`, `lib/` пока не созданы — добавляются по мере работы над этапами 2–3.
+> Папки `routes/`, `socket/`, `pages/`, `components/`, `lib/` помечены как **целевые** — пока не созданы, появляются по мере работы над этапами 2–3.
 
 ```
 /
 ├── CLAUDE.md
 ├── .gitignore
+├── .env.example              # для docker-compose (POSTGRES_USER/PASSWORD/DB)
+├── docker-compose.yml        # локальный Postgres
+├── .github/
+│   └── workflows/
+│       └── deploy.yml        # auto-deploy в main
+├── deploy/
+│   ├── bootstrap.sh          # одноразовая первичная настройка сервера
+│   ├── deploy.sh             # инкрементальный деплой (CI + руками)
+│   ├── init-db.sql           # создание Postgres-юзера/БД на сервере
+│   └── nginx-snippet.conf    # блоки для существующего конфига Nginx
 ├── frontend/
 │   ├── src/
-│   │   ├── pages/         # маршруты приложения
-│   │   ├── pages/games/   # каждая игра — отдельный компонент
-│   │   ├── components/
-│   │   └── lib/           # API клиент (axios), socket клиент
-│   ├── vite.config.ts     # сюда подключается @tailwindcss/vite
+│   │   ├── pages/            # маршруты приложения (целевая)
+│   │   ├── pages/games/      # каждая игра — отдельный компонент (целевая)
+│   │   ├── components/       # (целевая)
+│   │   └── lib/              # API клиент (axios), socket клиент (целевая)
+│   ├── vite.config.ts        # подключён @tailwindcss/vite
 │   └── tsconfig.json
-│
 └── backend/
     ├── src/
-    │   ├── index.ts       # Точка входа, Fastify + Socket.io
-    │   ├── routes/        # auth, games, scores, matches
-    │   ├── socket/        # Socket.io handlers
-    │   └── types/index.ts # Общие TypeScript типы
+    │   ├── index.ts          # Точка входа, Fastify + Socket.io
+    │   ├── routes/           # auth, games, scores, matches (целевая)
+    │   ├── socket/           # Socket.io handlers (целевая)
+    │   └── types/index.ts    # Общие TypeScript типы
     ├── prisma/
-    │   └── schema.prisma  # источник истины для моделей БД
+    │   ├── schema.prisma     # источник истины для моделей БД
+    │   └── migrations/       # коммитятся в git, на проде применяются `migrate deploy`
     ├── prisma.config.ts
-    ├── tsconfig.json
-    └── .env
+    ├── ecosystem.config.cjs  # манифест PM2
+    ├── .env.example
+    └── tsconfig.json
 ```
 
 ## Команды
 
 ```bash
-# База данных (Postgres в Docker)
+# База данных (локально, Postgres в Docker)
 docker compose up -d db          # поднять БД в фоне
 docker compose stop db           # остановить
-docker compose down              # снести контейнер (volume gamesite-db-data сохраняется)
+docker compose down              # снести контейнер (volume сохраняется)
 docker compose down -v           # снести вместе с данными
 
 # Бэкенд
@@ -73,27 +88,24 @@ cd frontend && npm run dev       # dev режим
 cd frontend && npm run build     # сборка в dist/
 
 # Prisma
-cd backend && npx prisma migrate dev     # создать и применить миграцию
-cd backend && npx prisma migrate deploy  # применить миграции на проде
+cd backend && npx prisma migrate dev     # ЛОКАЛЬНО: создать миграцию
+cd backend && npx prisma migrate deploy  # ПРОД: применить миграции (вызывается из deploy.sh)
 cd backend && npx prisma studio          # GUI для БД
 cd backend && npx prisma generate        # обновить Prisma Client
 
-# better-auth (сгенерировать недостающие модели в schema.prisma)
+# better-auth (сверить схему better-auth с актуальной)
 cd backend && npx @better-auth/cli generate
 ```
 
 ## Переменные окружения
 
-`backend/.env`:
-```env
-DATABASE_URL="postgresql://gamesite:пароль@localhost:5432/gamesite_db"
-BETTER_AUTH_SECRET="длинная_случайная_строка"
-BETTER_AUTH_URL="https://твой_домен.com"
-FRONTEND_URL="https://твой_домен.com"
-PORT=3000
-```
+Шаблоны лежат в репо, реальные `.env` — нет (gitignore):
+- [.env.example](.env.example) → `.env` в корне (для `docker-compose`)
+- [backend/.env.example](backend/.env.example) → `backend/.env` (для бэкенда)
 
-> better-auth сам управляет хранением паролей, сессий и OAuth-аккаунтов — отдельный `JWT_SECRET` не нужен.
+БД называется `loweffort` и в dev, и на проде (юзер тоже `loweffort`).
+
+`BETTER_AUTH_SECRET` генерируется командой `openssl rand -hex 32` (на сервере) или `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`.
 
 ## Модели БД
 
@@ -104,7 +116,9 @@ PORT=3000
 - `Session`, `Account`, `Verification` — модели better-auth (генерируются CLI, не править руками).
 - `Game` — каталог игр.
 - `Score` — рекорды по играм.
-- `Match` + `MatchPlayer` — мультиплеерные матчи.
+- `Match` + `MatchPlayer` — мультиплеерные матчи (`winnerId` → `User`).
+
+Миграции коммитятся в `backend/prisma/migrations/`. На проде применяются через `prisma migrate deploy` (это делает [deploy/deploy.sh](deploy/deploy.sh)).
 
 ## TypeScript типы
 
@@ -112,39 +126,56 @@ PORT=3000
 
 ## Деплой
 
-Прод: VPS `185.221.154.105`, домен `loweffort.site`, проект клонирован в `/home/deploy/loweffort`.
+Полный цикл уже работает:
 
-Артефакты в репо:
+```
+git push origin main
+        ↓
+GitHub Actions (.github/workflows/deploy.yml)
+        ↓
+SSH deploy@185.221.154.105 (ключ из секрета DEPLOY_SSH_KEY)
+        ↓
+bash /home/deploy/loweffort/deploy/deploy.sh
+   • git fetch + reset --hard origin/main
+   • npm ci (backend + frontend)
+   • prisma generate + migrate deploy
+   • npm run build (backend + frontend)
+   • chmod o+rX на frontend/dist (для www-data)
+   • pm2 reload loweffort-api (zero-downtime)
+        ↓
+https://loweffort.site обновлён
+```
+
+### Артефакты деплоя
 - [deploy/bootstrap.sh](deploy/bootstrap.sh) — одноразовая первичная настройка на сервере
-- [deploy/deploy.sh](deploy/deploy.sh) — инкрементальный деплой (вызывается из CI и вручную)
+- [deploy/deploy.sh](deploy/deploy.sh) — инкрементальный деплой (CI + ручной)
 - [deploy/init-db.sql](deploy/init-db.sql) — создание Postgres-юзера/БД
-- [deploy/nginx-snippet.conf](deploy/nginx-snippet.conf) — блоки для существующего конфига Nginx
+- [deploy/nginx-snippet.conf](deploy/nginx-snippet.conf) — блоки Nginx
 - [backend/ecosystem.config.cjs](backend/ecosystem.config.cjs) — манифест PM2
-- [.github/workflows/deploy.yml](.github/workflows/deploy.yml) — авто-деплой на push в `main`
+- [.github/workflows/deploy.yml](.github/workflows/deploy.yml) — workflow
 
-### Первичная настройка (один раз)
+### Когда нужно зайти на сервер руками
+- Посмотреть логи бэкенда: `pm2 logs loweffort-api`
+- Перезапустить: `pm2 restart loweffort-api`
+- Глянуть Nginx: `sudo tail -f /var/log/nginx/error.log`
+- Поправить конфиг Nginx: `sudo nano /etc/nginx/sites-available/default`, потом `sudo nginx -t && sudo systemctl reload nginx`
 
-См. [deploy/bootstrap.sh](deploy/bootstrap.sh) — скрипт ведёт за руку.
-
-### GitHub Actions
-
-Workflow слушает push в `main` и `workflow_dispatch`. На сервер заходит SSH-ключом из секрета `DEPLOY_SSH_KEY`. Чтобы поднять:
-
-1. На локальной машине: `ssh-keygen -t ed25519 -f ~/.ssh/loweffort_deploy -C "github-actions"` (без passphrase)
-2. Публичную часть `~/.ssh/loweffort_deploy.pub` добавить в `~deploy/.ssh/authorized_keys` на VPS
-3. Приватную часть (`~/.ssh/loweffort_deploy`) скопировать в GitHub: Repo → Settings → Secrets and variables → Actions → New repository secret → имя `DEPLOY_SSH_KEY`
+### GitHub Secrets
+- `DEPLOY_SSH_KEY` — приватный SSH-ключ для входа от имени `deploy@185.221.154.105`. Публичная пара лежит в `~deploy/.ssh/authorized_keys` на VPS.
 
 ## Соглашения
 
+- Ветка `main` = прод. Работаем в фиче-ветках (`feat/*`, `fix/*`), мерджим через PR.
 - Все API роуты с префиксом `/api/`
 - Общие типы — в [backend/src/types/index.ts](backend/src/types/index.ts)
 - Socket.io handlers — в `backend/src/socket/`
 - Каждая игра — отдельный компонент в `frontend/src/pages/games/`
 - Score отправляется на `/api/scores` после окончания игры
+- Миграции БД создавать **только локально** (`migrate dev`), коммитить в git, применять на проде автоматически через `migrate deploy` в pipeline
 
 ## Прогресс по этапам
 
-- [x] Этап 1 — Инфраструктура VPS (Nginx, PM2, PostgreSQL, HTTPS)
+- [x] Этап 1 — Инфраструктура VPS (Nginx, PM2, PostgreSQL, HTTPS, auto-deploy через GitHub Actions)
 - [ ] Этап 2 — Бэкенд: auth (better-auth) + API роуты (`routes/auth`, `routes/games`, `routes/scores`, `routes/matches`)
 - [ ] Этап 3 — Фронтенд: базовые страницы, axios-клиент, socket-клиент
 - [ ] Этап 4 — Первая игра
