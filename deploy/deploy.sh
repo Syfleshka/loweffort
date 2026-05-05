@@ -9,11 +9,15 @@
 
 set -euo pipefail
 
-# Подгружаем nvm — non-interactive SSH сессии (GitHub Actions) не читают .bashrc,
-# где обычно прописан nvm, поэтому npm/node/pm2 без этого не находятся.
+# Добавляем Node (из nvm) в PATH. Non-interactive SSH сессии (GitHub Actions)
+# не читают .bashrc, где обычно прописан nvm — поэтому npm/node/pm2 без этого
+# не находятся. Не сорсим nvm.sh, потому что он не всегда выставляет PATH;
+# вместо этого добавляем bin последней установленной версии Node напрямую.
 export NVM_DIR="$HOME/.nvm"
-# shellcheck disable=SC1091
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+if [ -d "$NVM_DIR/versions/node" ]; then
+    NODE_BIN="$NVM_DIR/versions/node/$(ls -1 "$NVM_DIR/versions/node" | sort -V | tail -1)/bin"
+    export PATH="$NODE_BIN:$PATH"
+fi
 
 PROJECT_DIR="${PROJECT_DIR:-/home/deploy/loweffort}"
 BRANCH="${BRANCH:-main}"
