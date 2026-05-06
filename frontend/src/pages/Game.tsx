@@ -7,10 +7,12 @@ import { Layout } from '../components/Layout'
 import { StatusNote } from '../components/StatusNote'
 import type { Game } from '../types'
 import { TicTacToe } from './games/TicTacToe'
+import { Battleships } from './games/Battleships'
 import s from './Game.module.scss'
 
 const GAME_COMPONENTS: Record<string, React.ComponentType<{ game: Game }>> = {
   tictactoe: TicTacToe,
+  battleships: Battleships,
 }
 
 export default function GamePage() {

@@ -49,6 +49,12 @@ const GAMES = [
         description: 'Падают фигуры — складывай ровными строками. До скорости света.',
         maxPlayers: 1,
     },
+    {
+        slug: 'battleships',
+        title: 'Куриный бой',
+        description: 'Морской бой с цыплятами: расставляй стаи, кидай корм, пускай авиаудары.',
+        maxPlayers: 2,
+    },
 ] as const
 
 async function main() {
