@@ -3,8 +3,16 @@
 
 .root {
   display: flex;
-  min-height: 100vh;
   flex-direction: column;
+}
+
+// TopBar + main fill the visible viewport so the footer is always parked
+// just below the fold. `dvh` accounts for collapsing browser chrome on mobile.
+.screen {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
 }
 
 .main {
