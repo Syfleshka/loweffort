@@ -146,6 +146,14 @@ cd backend && npx @better-auth/cli generate
 
 Сессия хранится в HTTP-only cookie. Защищённые роуты дёргают `requireUser(request)` из [backend/src/lib/session.ts](backend/src/lib/session.ts).
 
+#### Контракт регистрации/логина на фронте
+
+Регистрация: **логин обязательный + уникальный** (regex `^[a-zA-Z0-9_-]{3,24}$`, проверяется и на фронте, и в `usernameValidator` плагина username), **email опциональный**, пароль ≥ 8 символов с подтверждением. better-auth требует email в схеме, поэтому если пользователь его не дал, фронт синтезирует placeholder `<username>@noemail.local` — `.local` это reserved TLD (RFC 6762), отправить туда что-либо нельзя. Если потом понадобится отличать "настоящий" email от синтетики — фильтровать по домену или по `emailVerified`.
+
+Логин: одно поле "email или логин" + пароль. Фронт смотрит на наличие `@` в строке и зовёт либо `sign-in/email`, либо `sign-in/username`.
+
+Клиент авторизации — [frontend/src/lib/auth.ts](frontend/src/lib/auth.ts). Состояние сессии в [frontend/src/lib/AppProvider.tsx](frontend/src/lib/AppProvider.tsx) (`user`, `isAuthLoading`, `refreshSession`, `signOut` через `useApp()`).
+
 ### Games
 - `GET /api/games` — каталог
 - `GET /api/games/:slug` — одна игра
@@ -223,6 +231,6 @@ https://loweffort.site обновлён
 
 - [x] Этап 1 — Инфраструктура VPS (Nginx, PM2, PostgreSQL, HTTPS, auto-deploy через GitHub Actions)
 - [x] Этап 2 — Бэкенд: better-auth (email/password + username plugin), Prisma + pg-adapter, REST роуты (`games`, `scores`, `matches`), Socket.io match-handlers как фундамент под этап 5
-- [ ] Этап 3 — Фронтенд: базовые страницы, axios-клиент, socket-клиент
-- [ ] Этап 4 — Первая игра
+- [x] Этап 3 — Фронтенд: главная (каталог), маршрутизация, axios-клиент, theme/lang в context, формы регистрации и логина
+- [x] Этап 4 — Первая игра: крестики-нолики (hot-seat) на `/games/tictactoe`
 - [ ] Этап 5 — Мультиплеер (игровая логика, валидация ходов, синхронизация состояния)

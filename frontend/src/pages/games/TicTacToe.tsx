@@ -123,8 +123,8 @@ export function TicTacToe({ game }: { game: Game }) {
                 <Mark kind={cell} highlighted={isWinning} />
               ) : (
                 isInteractive && (
-                  <span className="pointer-events-none opacity-0 transition-opacity duration-150 group-hover:opacity-30">
-                    <Mark kind={turn} />
+                  <span className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-150 group-hover:opacity-30">
+                    <Mark kind={turn} animated={false} />
                   </span>
                 )
               )}
@@ -161,19 +161,57 @@ function ScoreItem({ label, value }: { label: string; value: number }) {
   )
 }
 
-function Mark({ kind, highlighted = false }: { kind: Player; highlighted?: boolean }) {
+function Mark({
+  kind,
+  highlighted = false,
+  animated = true,
+}: {
+  kind: Player
+  highlighted?: boolean
+  animated?: boolean
+}) {
   const stroke = highlighted ? 'var(--le-accent)' : 'currentColor'
+  const base = animated ? 'le-mark-stroke' : ''
   if (kind === 'X') {
     return (
       <svg viewBox="0 0 100 100" className="h-1/2 w-1/2" aria-hidden="true">
-        <line x1="22" y1="22" x2="78" y2="78" stroke={stroke} strokeWidth="6" strokeLinecap="round" />
-        <line x1="78" y1="22" x2="22" y2="78" stroke={stroke} strokeWidth="6" strokeLinecap="round" />
+        <line
+          x1="22"
+          y1="22"
+          x2="78"
+          y2="78"
+          stroke={stroke}
+          strokeWidth="6"
+          strokeLinecap="round"
+          pathLength="100"
+          className={`${base} ${animated ? 'le-mark-x1' : ''}`}
+        />
+        <line
+          x1="78"
+          y1="22"
+          x2="22"
+          y2="78"
+          stroke={stroke}
+          strokeWidth="6"
+          strokeLinecap="round"
+          pathLength="100"
+          className={`${base} ${animated ? 'le-mark-x2' : ''}`}
+        />
       </svg>
     )
   }
   return (
     <svg viewBox="0 0 100 100" className="h-1/2 w-1/2" aria-hidden="true">
-      <circle cx="50" cy="50" r="28" stroke={stroke} strokeWidth="6" fill="none" />
+      <circle
+        cx="50"
+        cy="50"
+        r="28"
+        stroke={stroke}
+        strokeWidth="6"
+        fill="none"
+        pathLength="100"
+        className={`${base} ${animated ? 'le-mark-o' : ''}`}
+      />
     </svg>
   )
 }

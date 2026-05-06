@@ -89,6 +89,55 @@ a {
   text-decoration-thickness: 2px;
 }
 
+/* ── Form input + primary button ─────────────────────────── */
+.le-input {
+  display: block;
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--color-line);
+  border-radius: 4px;
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: var(--font-serif);
+  font-size: 16px;
+  line-height: 1.3;
+  transition: border-color 0.15s;
+}
+.le-input::placeholder { color: var(--color-fg-3); }
+.le-input:focus {
+  outline: none;
+  border-color: var(--le-accent);
+}
+.le-input.is-error { border-color: oklch(0.55 0.18 25); }
+
+.le-btn-primary {
+  appearance: none;
+  background: transparent;
+  border: 1px solid var(--color-fg);
+  border-radius: 4px;
+  padding: 12px 24px;
+  font-family: var(--font-serif);
+  font-size: 14px;
+  color: var(--color-fg);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.le-btn-primary:hover:not(:disabled) {
+  background: var(--color-fg);
+  color: var(--color-bg);
+}
+.le-btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.le-form-error {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: oklch(0.55 0.18 25);
+}
+
 /* ── Generic underlined link — thickens + accents on hover ── */
 .le-link {
   text-decoration: underline;
@@ -213,4 +262,29 @@ a {
 @media (prefers-reduced-motion: reduce) {
   .le-pulse { animation: none; }
   .le-card-overlay { transition: none; }
+}
+
+/* ── Tic-tac-toe — draw-on-place animation ────────────────────
+   Uses pathLength="100" on the SVG shapes so all marks share a
+   single normalized dashoffset → 0 keyframe.                  */
+@keyframes le-mark-draw {
+  from { stroke-dashoffset: 100; }
+  to   { stroke-dashoffset: 0; }
+}
+.le-mark-stroke {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  animation: le-mark-draw 200ms ease-out forwards;
+  transition: stroke 0.15s;
+}
+.le-mark-x1 { animation-duration: 180ms; }
+.le-mark-x2 { animation-duration: 180ms; animation-delay: 160ms; }
+.le-mark-o  { animation-duration: 360ms; }
+
+@media (prefers-reduced-motion: reduce) {
+  .le-mark-stroke {
+    animation: none;
+    stroke-dasharray: none;
+    stroke-dashoffset: 0;
+  }
 }
