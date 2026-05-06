@@ -13,8 +13,9 @@
   color: var(--color-fg-3);
 
   @include m.mobile {
-    padding-left: t.$pad-x-mobile;
-    padding-right: t.$pad-x-mobile;
+    grid-template-columns: 1fr;
+    gap: t.$space-4;
+    padding: t.$space-6 t.$pad-x-mobile;
   }
 }
 
@@ -34,6 +35,10 @@
   align-items: center;
   gap: t.$space-4;
   white-space: nowrap;
+
+  @include m.mobile {
+    justify-content: center;
+  }
 }
 
 .online {
@@ -74,6 +79,10 @@
   align-items: center;
   justify-content: flex-end;
   gap: t.$space-5;
+
+  @include m.mobile {
+    justify-content: center;
+  }
 }
 
 .ghLink {
