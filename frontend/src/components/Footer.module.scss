@@ -50,10 +50,22 @@
   margin-right: 6px;
   vertical-align: middle;
   box-shadow: 0 0 0 0 color-mix(in oklch, var(--color-fg) 55%, transparent);
-  animation: le-pulse 2s infinite;
+  animation: pulse 2s infinite;
 
   @include m.reduced-motion {
     animation: none;
+  }
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in oklch, var(--color-fg) 55%, transparent);
+  }
+  70% {
+    box-shadow: 0 0 0 8px color-mix(in oklch, var(--color-fg) 0%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in oklch, var(--color-fg) 0%, transparent);
   }
 }
 

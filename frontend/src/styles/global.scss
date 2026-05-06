@@ -53,25 +53,6 @@ a {
   text-decoration: none;
 }
 
-// ── Global keyframes ─────────────────────────────────────────
-// Referenced by Footer (live online dot) and TicTacToe (mark draw).
-@keyframes le-pulse {
-  0% {
-    box-shadow: 0 0 0 0 color-mix(in oklch, var(--color-fg) 55%, transparent);
-  }
-  70% {
-    box-shadow: 0 0 0 8px color-mix(in oklch, var(--color-fg) 0%, transparent);
-  }
-  100% {
-    box-shadow: 0 0 0 0 color-mix(in oklch, var(--color-fg) 0%, transparent);
-  }
-}
-
-@keyframes le-mark-draw {
-  from {
-    stroke-dashoffset: 100;
-  }
-  to {
-    stroke-dashoffset: 0;
-  }
-}
+// Component keyframes (`pulse` in Footer, `mark-draw` in TicTacToe) live next
+// to their consumers — CSS Modules scopes both the @keyframes name and the
+// `animation:` reference, so they only match if defined in the same module.

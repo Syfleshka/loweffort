@@ -162,7 +162,6 @@ function Mark({
           stroke={stroke}
           strokeWidth="6"
           strokeLinecap="round"
-          pathLength="100"
           className={cls(s.strokeX1)}
         />
         <line
@@ -173,7 +172,6 @@ function Mark({
           stroke={stroke}
           strokeWidth="6"
           strokeLinecap="round"
-          pathLength="100"
           className={cls(s.strokeX2)}
         />
       </svg>
@@ -188,7 +186,6 @@ function Mark({
         stroke={stroke}
         strokeWidth="6"
         fill="none"
-        pathLength="100"
         className={cls(s.strokeO)}
       />
     </svg>

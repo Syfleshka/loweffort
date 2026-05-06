@@ -53,6 +53,7 @@
   align-items: center;
   justify-content: center;
   background: var(--color-bg);
+  color: var(--color-fg);
   border: 0;
   cursor: pointer;
   transition: background-color t.$dur-quick;
@@ -150,10 +151,16 @@
   height: 50%;
 }
 
+// Draw-on animation. Path lengths in user units of viewBox 0 0 100 100:
+//   X line (22,22)→(78,78): √(56² + 56²) ≈ 79.2 → use 80
+//   O circle r=28: 2π·28 ≈ 175.93 → use 176
+// Slight overshoot is hidden by the round linecap.
+//
+// Explicit `px` units throughout so the build pipeline doesn't add px to one
+// endpoint of the animation and not the other (mismatched-unit interpolation
+// silently breaks).
 .stroke {
-  stroke-dasharray: 100;
-  stroke-dashoffset: 100;
-  animation: le-mark-draw 200ms ease-out forwards;
+  animation: markDraw 200ms ease-out forwards;
   transition: stroke t.$dur-quick;
 
   @include m.reduced-motion {
@@ -164,14 +171,26 @@
 }
 
 .strokeX1 {
+  stroke-dasharray: 80px;
+  stroke-dashoffset: 80px;
   animation-duration: 180ms;
 }
 
 .strokeX2 {
+  stroke-dasharray: 80px;
+  stroke-dashoffset: 80px;
   animation-duration: 180ms;
   animation-delay: 160ms;
 }
 
 .strokeO {
+  stroke-dasharray: 176px;
+  stroke-dashoffset: 176px;
   animation-duration: 360ms;
+}
+
+@keyframes markDraw {
+  to {
+    stroke-dashoffset: 0;
+  }
 }
