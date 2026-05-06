@@ -1,5 +1,6 @@
 import { Fragment } from 'react'
-import { BOARD_SIZE, Cell, Ship } from './BattleshipsTypes'
+import type { Cell, Ship } from './BattleshipsTypes'
+import { BOARD_SIZE } from './BattleshipsTypes'
 import { shipCells } from './BattleshipsLogic'
 
 export type BoardMode =

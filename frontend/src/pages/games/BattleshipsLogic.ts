@@ -1,4 +1,5 @@
-import { BOARD_SIZE, Cell, FLEET, Ship } from './BattleshipsTypes'
+import type { Cell, Ship } from './BattleshipsTypes'
+import { BOARD_SIZE, FLEET } from './BattleshipsTypes'
 
 export function shipCells(ship: Ship): Cell[] {
   const cells: Cell[] = []

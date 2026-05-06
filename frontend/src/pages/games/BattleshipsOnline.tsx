@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import type { Game } from '../../types'
 import { getSocket } from '../../lib/socket'
-import { Cell, Orientation, Ship } from './BattleshipsTypes'
-import { RadarMark } from './BattleshipsBoard'
+import type { Cell, Orientation, Ship } from './BattleshipsTypes'
+import type { RadarMark } from './BattleshipsBoard'
 import { BattleshipsPlacement } from './BattleshipsPlacement'
 import { BattleshipsGame } from './BattleshipsGame'
 

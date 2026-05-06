@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Cell, FLEET, Orientation, Ship } from './BattleshipsTypes'
+import type { Cell, Orientation, Ship } from './BattleshipsTypes'
+import { FLEET } from './BattleshipsTypes'
 import { randomPlacement, shipCells, validateGeometry, validatePlacement } from './BattleshipsLogic'
 import { BattleshipsBoard } from './BattleshipsBoard'
 

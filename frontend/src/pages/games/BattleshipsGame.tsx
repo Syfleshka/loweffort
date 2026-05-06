@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
-import { Cell, COST_AIRSTRIKE, COST_MINE, COST_RADAR, Orientation, Ship } from './BattleshipsTypes'
-import { BattleshipsBoard, BoardMode, RadarMark } from './BattleshipsBoard'
+import type { Cell, Orientation, Ship } from './BattleshipsTypes'
+import { COST_AIRSTRIKE, COST_MINE, COST_RADAR } from './BattleshipsTypes'
+import type { BoardMode, RadarMark } from './BattleshipsBoard'
+import { BattleshipsBoard } from './BattleshipsBoard'
 
 type AbilityMode = 'shoot' | 'mine' | 'radar' | 'airstrike'
 
