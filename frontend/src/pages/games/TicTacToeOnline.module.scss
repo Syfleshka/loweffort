@@ -1,0 +1,175 @@
+@use '../../styles/tokens' as t;
+@use '../../styles/mixins' as m;
+
+// ── Mode selector list ──────────────────────────────────────
+.modeList {
+  display: flex;
+  flex-direction: column;
+  gap: t.$space-4;
+  width: 100%;
+  max-width: 420px;
+}
+
+.modeCard {
+  @include m.button-reset;
+  display: flex;
+  flex-direction: column;
+  gap: t.$space-2;
+  text-align: left;
+  padding: t.$space-5 t.$space-6;
+  border: 1px solid var(--color-line);
+  border-radius: t.$radius-sm;
+  background: var(--color-bg);
+  transition:
+    border-color t.$dur-quick,
+    background t.$dur-quick;
+
+  &:hover,
+  &:focus-visible {
+    background: var(--color-bg-2);
+    border-color: var(--color-line-2);
+  }
+}
+
+.modeCardTitle {
+  @include m.serif(t.$fs-20, 500, t.$tracking-tight-xs, t.$lh-snug);
+  color: var(--color-fg);
+}
+
+.modeCardHint {
+  @include m.mono(t.$fs-11, t.$tracking-mono);
+  color: var(--color-fg-3);
+}
+
+// ── Join-by-code form ───────────────────────────────────────
+.joinForm {
+  display: flex;
+  flex-direction: column;
+  gap: t.$space-3;
+  width: 100%;
+  max-width: 420px;
+}
+
+.joinLabel {
+  @include m.mono(t.$fs-11, t.$tracking-mono);
+  color: var(--color-fg-3);
+}
+
+.joinRow {
+  display: flex;
+  gap: t.$space-3;
+}
+
+.joinInput {
+  flex: 1;
+  padding: t.$space-4 t.$space-5;
+  border: 1px solid var(--color-line);
+  border-radius: t.$radius-sm;
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: t.$font-mono;
+  font-size: t.$fs-16;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  transition: border-color t.$dur-quick;
+
+  &::placeholder {
+    color: var(--color-fg-3);
+    text-transform: none;
+    letter-spacing: t.$tracking-mono;
+    font-size: t.$fs-13;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--le-accent);
+  }
+}
+
+.joinBtn {
+  @include m.button-reset;
+  padding: 0 t.$space-6;
+  border: 1px solid var(--color-fg);
+  border-radius: t.$radius-sm;
+  background: transparent;
+  color: var(--color-fg);
+  font-family: t.$font-mono;
+  font-size: t.$fs-13;
+  text-transform: lowercase;
+  cursor: pointer;
+  transition:
+    background t.$dur-quick,
+    color t.$dur-quick,
+    opacity t.$dur-quick;
+
+  &:hover:not(:disabled) {
+    background: var(--color-fg);
+    color: var(--color-bg);
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+// ── Room code display ───────────────────────────────────────
+.codeBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: t.$space-3;
+}
+
+.codeLabel {
+  @include m.mono(t.$fs-11, t.$tracking-mono);
+  color: var(--color-fg-3);
+}
+
+.code {
+  @include m.serif(48px, 500, 0.18em, t.$lh-tight);
+  color: var(--color-fg);
+  padding: t.$space-4 t.$space-6;
+  border: 1px solid var(--color-line);
+  border-radius: t.$radius-sm;
+  background: var(--color-bg-2);
+  user-select: all;
+}
+
+// ── Match header & states ───────────────────────────────────
+.matchup {
+  margin: 0;
+  @include m.mono(t.$fs-11, t.$tracking-mono);
+  color: var(--color-fg-2);
+}
+
+.errorMsg {
+  margin: 0;
+  @include m.mono(t.$fs-13, t.$tracking-mono);
+  color: var(--color-error);
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: t.$space-4;
+}
+
+.linkBtn {
+  padding: t.$space-3 t.$space-6;
+  border: 1px solid var(--color-fg);
+  border-radius: t.$radius-sm;
+  font-family: t.$font-mono;
+  font-size: t.$fs-13;
+  text-transform: lowercase;
+  color: var(--color-fg);
+  transition:
+    background t.$dur-quick,
+    color t.$dur-quick;
+
+  &:hover {
+    background: var(--color-fg);
+    color: var(--color-bg);
+  }
+}

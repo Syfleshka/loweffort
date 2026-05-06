@@ -171,13 +171,27 @@ cd backend && npx @better-auth/cli generate
 - `POST /api/matches/:id/finish` *(auth)* — `{ winnerId?, state? }`, переводит в `finished`
 
 ### Socket.io
-Auth handshake берёт session cookie и валидирует через better-auth. После коннекта доступны события:
-- `match:join` (matchId) → ack `{ ok, error? }`, рассылает `match:peer-joined` остальным в комнате
-- `match:leave` (matchId) → рассылает `match:peer-left`
-- `match:move` (`{ matchId, move }`) → релей в комнату как `match:move` с `from: userId`
-- `match:state` (`{ matchId, state }`) → релей в комнату как `match:state` с `from: userId`
+Auth handshake берёт session cookie и валидирует через better-auth. Без сессии коннект отклоняется. Дальше — два набора хендлеров:
 
-Игровая логика и валидация ходов — на этапе 5.
+#### Generic match relay ([match.ts](backend/src/socket/match.ts))
+- `match:join` (matchId) → ack, рассылает `match:peer-joined`
+- `match:leave` (matchId) → рассылает `match:peer-left`
+- `match:move` (`{ matchId, move }`) → релей как `match:move` с `from: userId`
+- `match:state` (`{ matchId, state }`) → релей как `match:state` с `from: userId`
+
+Чистый transport-relay поверх БД-таблицы `Match`. Использовать когда игре достаточно P2P-эха состояний.
+
+#### TTT authoritative ([ttt.ts](backend/src/socket/ttt.ts))
+Сервер — источник истины для крестиков-ноликов: валидирует ход, определяет победителя и winning line, шлёт `ttt:state` обоим. State в памяти, никаких записей в БД. Disconnect = форфейт. Комнаты-`waiting` без матча убираются через 30 минут.
+
+- `ttt:create_room` → ack `{ ok, state }` (state.code — 5 символов из `ABCDEFGHJKLMNPQRSTUVWXYZ23456789`)
+- `ttt:join_room` (`{ code }`) → ack `{ ok, state }` или `{ ok: false, error: 'room_not_found' | 'room_in_progress' | 'room_full' | 'invalid_code' }`
+- `ttt:random_match` → ack `{ ok, state }` если в очереди уже кто-то есть, иначе `{ ok, queued: true }`
+- `ttt:cancel_queue` — выйти из random-очереди
+- `ttt:cancel_room` (`{ matchId }`) — закрыть комнату-`waiting` (только хост)
+- `ttt:move` (`{ matchId, index }`) → ack `{ ok, error? }` (`not_active | invalid_index | cell_taken | not_a_player | not_your_turn | match_not_found`)
+- `ttt:leave` (`{ matchId }`) — форфейт
+- сервер → клиент: `ttt:state` (PublicState) и `ttt:cancelled` (`{ matchId }`)
 
 ## Деплой
 
@@ -233,5 +247,5 @@ https://loweffort.site обновлён
 - [x] Этап 1 — Инфраструктура VPS (Nginx, PM2, PostgreSQL, HTTPS, auto-deploy через GitHub Actions)
 - [x] Этап 2 — Бэкенд: better-auth (email/password + username plugin), Prisma + pg-adapter, REST роуты (`games`, `scores`, `matches`), Socket.io match-handlers как фундамент под этап 5
 - [x] Этап 3 — Фронтенд: главная (каталог), маршрутизация, axios-клиент, theme/lang в context, формы регистрации и логина
-- [x] Этап 4 — Первая игра: крестики-нолики (hot-seat) на `/games/tictactoe`
-- [ ] Этап 5 — Мультиплеер (игровая логика, валидация ходов, синхронизация состояния)
+- [x] Этап 4 — Первая игра: крестики-нолики на `/games/tictactoe` (hot-seat / комната по коду / случайный противник)
+- [x] Этап 5 — Мультиплеер для TTT через Socket.io ([backend/src/socket/ttt.ts](backend/src/socket/ttt.ts) — авторитетный сервер)

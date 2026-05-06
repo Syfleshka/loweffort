@@ -115,6 +115,13 @@
   }
 }
 
+.exit {
+  @include m.button-reset;
+  @include m.mono(t.$fs-11, t.$tracking-mono);
+  color: var(--color-fg-3);
+  @include m.link-underline;
+}
+
 .score {
   display: flex;
   align-items: center;

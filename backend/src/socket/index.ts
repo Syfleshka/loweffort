@@ -1,6 +1,7 @@
 import type { Server, Socket } from 'socket.io'
 import { auth } from '../lib/auth.js'
 import { registerMatchHandlers } from './match.js'
+import { registerTttHandlers } from './ttt.js'
 
 export interface SocketUser {
     id: string
@@ -37,5 +38,6 @@ export function setupSocketServer(io: Server) {
 
     io.on('connection', (socket: Socket) => {
         registerMatchHandlers(io, socket)
+        registerTttHandlers(io, socket)
     })
 }
