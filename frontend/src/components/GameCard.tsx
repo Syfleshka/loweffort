@@ -30,7 +30,7 @@ export function GameCard({ game, lang }: Props) {
               {game.description}
             </p>
           )}
-          <span className="inline-flex items-center gap-2 self-start font-mono text-[11px] uppercase tracking-[0.12em] text-fg-2">
+          <span className="inline-flex items-center gap-2 self-start font-mono text-[11px] tracking-[0.12em] text-fg-2">
             {t(lang, 'play')}
             <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true">
               <path

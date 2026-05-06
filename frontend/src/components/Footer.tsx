@@ -1,40 +1,34 @@
-import type { Lang } from '../lib/i18n'
+import { useApp } from '../lib/appContext'
 import { t } from '../lib/i18n'
-import type { Theme } from '../lib/useTheme'
 import { ThemeToggle } from './ThemeToggle'
 import { LangToggle } from './LangToggle'
 
-interface Props {
-  lang: Lang
-  setLang: (l: Lang) => void
-  theme: Theme
-  setTheme: (t: Theme) => void
-  online: number
-}
+// TODO: replace 247 stub with a real online counter when an endpoint exists
+const ONLINE_STUB = 247
 
-export function Footer({ lang, setLang, theme, setTheme, online }: Props) {
+export function Footer() {
+  const { lang, setLang, theme, setTheme } = useApp()
+
   return (
     <footer
-      className="grid grid-cols-[1fr_auto_1fr] items-center gap-6 border-t border-line bg-bg-2 px-14 py-7 font-mono text-[11px] uppercase tracking-[0.06em] text-fg-3 max-[920px]:px-7"
+      className="grid grid-cols-[1fr_auto_1fr] items-center gap-6 border-t border-line bg-bg-2 px-14 py-7 font-mono text-[11px] tracking-[0.06em] text-fg-3 max-[920px]:px-7"
       aria-label="Site footer"
     >
-      {/* Left: wordmark + copyline */}
       <div className="flex flex-col gap-[6px]">
-        <span className="font-serif text-[16px] font-semibold normal-case tracking-[-0.01em] text-fg">
+        <span className="font-serif text-[16px] font-semibold tracking-[-0.01em] text-fg">
           loweffort<span className="text-fg">.</span>
         </span>
         <span>© 2026 — {t(lang, 'footer_made')}</span>
       </div>
 
-      {/* Center: live online stat */}
       <div className="flex items-center gap-3 whitespace-nowrap">
         <span>
           <span className="le-pulse" aria-hidden="true" />
-          <strong className="font-semibold text-fg">{online}</strong> {t(lang, 'footer_online')}
+          <strong className="font-semibold text-fg">{ONLINE_STUB}</strong>{' '}
+          {t(lang, 'footer_online')}
         </span>
       </div>
 
-      {/* Right: theme + GitHub + lang */}
       <div className="flex items-center justify-end gap-4">
         <ThemeToggle theme={theme} setTheme={setTheme} lang={lang} />
         <a

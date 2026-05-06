@@ -12,7 +12,7 @@ export function PlayersTag({ n, lang }: Props) {
   const dotCount = Math.max(1, n)
 
   return (
-    <span className="inline-flex items-center gap-2 whitespace-nowrap font-mono text-[11px] uppercase tracking-[0.06em] text-fg-2">
+    <span className="inline-flex items-center gap-2 whitespace-nowrap font-mono text-[11px] tracking-[0.06em] text-fg-2">
       <span className="inline-flex gap-[3px]" aria-hidden="true">
         {Array.from({ length: dotCount }).map((_, i) => (
           <span key={i} className="inline-block h-[6px] w-[6px] rounded-full bg-fg" />
