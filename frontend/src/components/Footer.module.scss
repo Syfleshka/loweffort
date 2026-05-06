@@ -23,6 +23,11 @@
   display: flex;
   flex-direction: column;
   gap: t.$space-2;
+
+  @include m.mobile {
+    align-items: center;
+    text-align: center;
+  }
 }
 
 .wordmark {

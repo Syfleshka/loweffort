@@ -8,48 +8,6 @@ const GAMES = [
         maxPlayers: 2,
     },
     {
-        slug: 'snake',
-        title: 'Змейка',
-        description: 'Ешь, расти, не врежься. Чем длиннее — тем теснее становится поле.',
-        maxPlayers: 1,
-    },
-    {
-        slug: 'minesweeper',
-        title: 'Сапёр',
-        description: 'Логика, флажки и редкие, но впечатляющие неудачи.',
-        maxPlayers: 1,
-    },
-    {
-        slug: 'pong',
-        title: 'Понг',
-        description: 'Две ракетки, один мяч, ноль причин не играть.',
-        maxPlayers: 2,
-    },
-    {
-        slug: 'memory',
-        title: 'Мемори',
-        description: 'Открывай парные карточки. Кто запомнил больше — тот и прав.',
-        maxPlayers: 4,
-    },
-    {
-        slug: '2048',
-        title: '2048',
-        description: 'Складывай числа, удваивай, не загоняй себя в угол.',
-        maxPlayers: 1,
-    },
-    {
-        slug: 'reversi',
-        title: 'Реверси',
-        description: 'Переворачивай чужие фишки. Углы — на вес золота.',
-        maxPlayers: 2,
-    },
-    {
-        slug: 'tetris',
-        title: 'Тетрис',
-        description: 'Падают фигуры — складывай ровными строками. До скорости света.',
-        maxPlayers: 1,
-    },
-    {
         slug: 'battleships',
         title: 'Куриный бой',
         description: 'Морской бой с цыплятами: расставляй стаи, кидай корм, пускай авиаудары.',
@@ -58,6 +16,14 @@ const GAMES = [
 ] as const
 
 async function main() {
+    const slugs = GAMES.map((g) => g.slug)
+
+    // Remove games that are no longer in the list.
+    const deleted = await prisma.game.deleteMany({
+        where: { slug: { notIn: slugs } },
+    })
+    if (deleted.count) console.log(`Removed ${deleted.count} stale game(s)`)
+
     for (const g of GAMES) {
         await prisma.game.upsert({
             where: { slug: g.slug },
