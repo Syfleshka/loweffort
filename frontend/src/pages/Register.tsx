@@ -11,6 +11,7 @@ import {
   register,
   USERNAME_RE,
 } from '../lib/auth'
+import s from './Auth.module.scss'
 
 interface FieldErrors {
   username?: string
@@ -87,12 +88,10 @@ export default function Register() {
 
   return (
     <Layout>
-      <div className="mx-auto flex w-full max-w-[420px] flex-1 flex-col justify-center gap-8 py-8">
-        <h1 className="m-0 text-center font-serif text-[36px] font-medium tracking-[-0.015em]">
-          {t(lang, 'reg_title')}
-        </h1>
+      <div className={s.wrap}>
+        <h1 className={s.title}>{t(lang, 'reg_title')}</h1>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-5" noValidate>
+        <form onSubmit={handleSubmit} className={s.form} noValidate>
           <Field
             label={t(lang, 'reg_username')}
             value={username}
@@ -130,16 +129,16 @@ export default function Register() {
             required
           />
 
-          {errors.form && <p className="le-form-error m-0">{errors.form}</p>}
+          {errors.form && <p className={s.formError}>{errors.form}</p>}
 
-          <button type="submit" className="le-btn-primary mt-2" disabled={submitting}>
+          <button type="submit" className={s.submit} disabled={submitting}>
             {submitting ? t(lang, 'reg_submitting') : t(lang, 'reg_submit')}
           </button>
         </form>
 
-        <p className="m-0 text-center font-mono text-[11px] tracking-[0.06em] text-fg-3">
+        <p className={s.alt}>
           {t(lang, 'reg_have_account')}{' '}
-          <Link to="/login" className="le-link">
+          <Link to="/login" className={s.altLink}>
             {t(lang, 'reg_login_link')}
           </Link>
         </p>

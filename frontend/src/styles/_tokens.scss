@@ -1,0 +1,66 @@
+// ────────────────────────────────────────────────────────────
+// Design tokens.
+// Theme color values live in :root / .dark in global.scss as
+// CSS custom properties so the theme toggle can flip them at
+// runtime without recompiling. Tokens here are SCSS values for
+// things that don't need to change between themes.
+// ────────────────────────────────────────────────────────────
+
+// ── Spacing ──────────────────────────────────────────────────
+$space-1: 4px;
+$space-2: 6px;
+$space-3: 8px;
+$space-4: 12px;
+$space-5: 16px;
+$space-6: 24px;
+$space-7: 28px;
+$space-8: 32px;
+$space-9: 40px;
+$space-10: 56px;
+$space-11: 64px;
+$space-12: 96px;
+
+// ── Layout ───────────────────────────────────────────────────
+$max-width: 1440px;
+$pad-x: 56px;
+$pad-x-mobile: 28px;
+
+// ── Breakpoints ──────────────────────────────────────────────
+$bp-mobile: 920px;
+
+// ── Typography ───────────────────────────────────────────────
+$font-serif: 'Lora', 'Times New Roman', Georgia, serif;
+$font-mono: 'JetBrains Mono', ui-monospace, monospace;
+
+$fs-11: 11px;
+$fs-13: 13px;
+$fs-14: 14px;
+$fs-15: 15px;
+$fs-16: 16px;
+$fs-20: 20px;
+$fs-22: 22px;
+$fs-26: 26px;
+$fs-36: 36px;
+$fs-44: 44px;
+
+$lh-tight: 1;
+$lh-snug: 1.2;
+$lh-base: 1.45;
+
+$tracking-tight-lg: -0.02em;
+$tracking-tight-md: -0.015em;
+$tracking-tight-sm: -0.01em;
+$tracking-tight-xs: -0.005em;
+$tracking-mono: 0.06em;
+$tracking-mono-wide: 0.12em;
+
+// ── Radii ────────────────────────────────────────────────────
+$radius-sm: 4px;
+$radius-pill: 9999px;
+
+// ── Motion ───────────────────────────────────────────────────
+$dur-quick: 0.15s;
+$dur-medium: 0.25s;
+
+// ── Z-index ──────────────────────────────────────────────────
+$z-topbar: 10;

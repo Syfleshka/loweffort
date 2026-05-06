@@ -2,37 +2,32 @@ import { useApp } from '../lib/appContext'
 import { t } from '../lib/i18n'
 import { ThemeToggle } from './ThemeToggle'
 import { LangToggle } from './LangToggle'
+import s from './Footer.module.scss'
 
-// TODO: replace 247 stub with a real online counter when an endpoint exists
+// TODO: replace 247 stub with a real online counter when an endpoint exists.
 const ONLINE_STUB = 247
 
 export function Footer() {
   const { lang, setLang, theme, setTheme } = useApp()
 
   return (
-    <footer
-      className="grid grid-cols-[1fr_auto_1fr] items-center gap-6 border-t border-line bg-bg-2 px-14 py-7 font-mono text-[11px] tracking-[0.06em] text-fg-3 max-[920px]:px-7"
-      aria-label="Site footer"
-    >
-      <div className="flex flex-col gap-[6px]">
-        <span className="font-serif text-[16px] font-semibold tracking-[-0.01em] text-fg">
-          loweffort<span className="text-fg">.</span>
-        </span>
+    <footer className={s.footer} aria-label="Site footer">
+      <div className={s.left}>
+        <span className={s.wordmark}>loweffort.</span>
         <span>© 2026 — {t(lang, 'footer_made')}</span>
       </div>
 
-      <div className="flex items-center gap-3 whitespace-nowrap">
+      <div className={s.center}>
         <span>
-          <span className="le-pulse" aria-hidden="true" />
-          <strong className="font-semibold text-fg">{ONLINE_STUB}</strong>{' '}
-          {t(lang, 'footer_online')}
+          <span className={s.pulse} aria-hidden="true" />
+          <strong className={s.online}>{ONLINE_STUB}</strong> {t(lang, 'footer_online')}
         </span>
       </div>
 
-      <div className="flex items-center justify-end gap-4">
+      <div className={s.right}>
         <ThemeToggle theme={theme} setTheme={setTheme} lang={lang} />
         <a
-          className="le-foot-link"
+          className={s.ghLink}
           href="https://github.com/Syfleshka/loweffort"
           target="_blank"
           rel="noreferrer"

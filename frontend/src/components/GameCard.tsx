@@ -4,6 +4,7 @@ import type { Lang } from '../lib/i18n'
 import { t } from '../lib/i18n'
 import { PlayersTag } from './PlayersTag'
 import { ScreenshotPlaceholder } from './ScreenshotPlaceholder'
+import s from './GameCard.module.scss'
 
 interface Props {
   game: Game
@@ -12,25 +13,16 @@ interface Props {
 
 export function GameCard({ game, lang }: Props) {
   return (
-    <Link to={`/games/${game.slug}`} className="le-card flex flex-col gap-[14px]">
-      <div className="relative aspect-[4/3] overflow-hidden rounded-[4px] border border-line bg-bg-2">
+    <Link to={`/games/${game.slug}`} className={s.card}>
+      <div className={s.cover}>
         {game.thumbnail ? (
-          <img
-            src={game.thumbnail}
-            alt=""
-            className="block h-full w-full object-cover"
-            loading="lazy"
-          />
+          <img src={game.thumbnail} alt="" className={s.thumb} loading="lazy" />
         ) : (
           <ScreenshotPlaceholder label={game.title} />
         )}
-        <div className="le-card-overlay">
-          {game.description && (
-            <p className="m-0 font-serif text-[15px] leading-[1.45] text-fg">
-              {game.description}
-            </p>
-          )}
-          <span className="inline-flex items-center gap-2 self-start font-mono text-[11px] tracking-[0.12em] text-fg-2">
+        <div className={s.overlay}>
+          {game.description && <p className={s.desc}>{game.description}</p>}
+          <span className={s.cta}>
             {t(lang, 'play')}
             <svg viewBox="0 0 16 16" width="12" height="12" aria-hidden="true">
               <path
@@ -45,10 +37,8 @@ export function GameCard({ game, lang }: Props) {
           </span>
         </div>
       </div>
-      <div className="flex items-baseline justify-between gap-4">
-        <h3 className="le-card-title m-0 font-serif text-[20px] font-medium tracking-[-0.005em] transition-colors duration-150">
-          {game.title}
-        </h3>
+      <div className={s.foot}>
+        <h3 className={s.title}>{game.title}</h3>
         <PlayersTag n={game.maxPlayers} lang={lang} />
       </div>
     </Link>
@@ -57,11 +47,11 @@ export function GameCard({ game, lang }: Props) {
 
 export function GameCardSkeleton() {
   return (
-    <div className="flex flex-col gap-[14px]" aria-hidden="true">
-      <div className="aspect-[4/3] rounded-[4px] border border-line bg-bg-2" />
-      <div className="flex items-baseline justify-between gap-4">
-        <div className="h-[20px] w-2/3 rounded-sm bg-bg-2" />
-        <div className="h-[11px] w-20 rounded-sm bg-bg-2" />
+    <div className={s.skeleton} aria-hidden="true">
+      <div className={s.skelCover} />
+      <div className={s.skelFoot}>
+        <div className={s.skelLine} />
+        <div className={s.skelTag} />
       </div>
     </div>
   )

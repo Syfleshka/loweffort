@@ -1,0 +1,25 @@
+@use '../styles/tokens' as t;
+@use '../styles/mixins' as m;
+
+.group {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--color-line-2);
+}
+
+.btn {
+  @include m.button-reset;
+  color: var(--color-fg-3);
+  letter-spacing: t.$tracking-mono;
+  transition: color t.$dur-quick;
+
+  &:hover {
+    color: var(--le-accent);
+  }
+
+  &[data-active='true'] {
+    color: var(--color-fg);
+    font-weight: 600;
+  }
+}

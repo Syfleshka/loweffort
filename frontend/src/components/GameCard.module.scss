@@ -1,0 +1,123 @@
+@use '../styles/tokens' as t;
+@use '../styles/mixins' as m;
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  cursor: pointer;
+}
+
+.cover {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: t.$radius-sm;
+  overflow: hidden;
+  border: 1px solid var(--color-line);
+  background: var(--color-bg-2);
+}
+
+.thumb {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklch, var(--color-bg) 0%, transparent) 0%,
+    color-mix(in oklch, var(--color-bg) 92%, transparent) 65%,
+    var(--color-bg) 100%
+  );
+  padding: t.$space-6;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 14px;
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity t.$dur-medium,
+    transform t.$dur-medium;
+
+  .card:hover &,
+  .card:focus-visible & {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  @include m.reduced-motion {
+    transition: none;
+  }
+}
+
+.desc {
+  margin: 0;
+  @include m.serif(t.$fs-15, 400, 0, t.$lh-base);
+  color: var(--color-fg);
+}
+
+.cta {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: t.$space-3;
+  @include m.mono(t.$fs-11, t.$tracking-mono-wide);
+  color: var(--color-fg-2);
+}
+
+.foot {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: t.$space-5;
+}
+
+.title {
+  margin: 0;
+  @include m.serif(t.$fs-20, 500, t.$tracking-tight-xs, t.$lh-snug);
+  transition: color t.$dur-quick;
+
+  .card:hover & {
+    color: var(--color-fg-2);
+  }
+}
+
+// ── Skeleton (loading) variant ───────────────────────────────
+.skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.skelCover {
+  aspect-ratio: 4 / 3;
+  border-radius: t.$radius-sm;
+  border: 1px solid var(--color-line);
+  background: var(--color-bg-2);
+}
+
+.skelFoot {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: t.$space-5;
+}
+
+.skelLine {
+  height: t.$fs-20;
+  width: 66%;
+  border-radius: 2px;
+  background: var(--color-bg-2);
+}
+
+.skelTag {
+  height: t.$fs-11;
+  width: 80px;
+  border-radius: 2px;
+  background: var(--color-bg-2);
+}

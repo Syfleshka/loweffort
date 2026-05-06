@@ -1,0 +1,14 @@
+@use '../styles/tokens' as t;
+@use '../styles/mixins' as m;
+
+.wrap {
+  display: flex;
+  flex: 1 1 0%;
+  align-items: center;
+  justify-content: center;
+}
+
+.text {
+  @include m.mono(t.$fs-11, t.$tracking-mono);
+  color: var(--color-fg-3);
+}

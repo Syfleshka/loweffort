@@ -7,6 +7,7 @@ import { Layout } from '../components/Layout'
 import { StatusNote } from '../components/StatusNote'
 import type { Game } from '../types'
 import { TicTacToe } from './games/TicTacToe'
+import s from './Game.module.scss'
 
 const GAME_COMPONENTS: Record<string, React.ComponentType<{ game: Game }>> = {
   tictactoe: TicTacToe,
@@ -42,11 +43,8 @@ function GameView({ slug }: { slug: string }) {
 
   return (
     <Layout>
-      <div className="mb-10">
-        <Link
-          to="/"
-          className="le-link inline-block font-mono text-[11px] tracking-[0.06em] text-fg-3"
-        >
+      <div className={s.backWrap}>
+        <Link to="/" className={s.back}>
           {t(lang, 'back_to_catalog')}
         </Link>
       </div>

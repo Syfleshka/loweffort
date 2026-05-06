@@ -5,6 +5,7 @@ import { Field } from '../components/Field'
 import { useApp } from '../lib/appContext'
 import { t } from '../lib/i18n'
 import { classifyAuthError, login } from '../lib/auth'
+import s from './Auth.module.scss'
 
 interface FieldErrors {
   identifier?: string
@@ -53,12 +54,10 @@ export default function Login() {
 
   return (
     <Layout>
-      <div className="mx-auto flex w-full max-w-[420px] flex-1 flex-col justify-center gap-8 py-8">
-        <h1 className="m-0 text-center font-serif text-[36px] font-medium tracking-[-0.015em]">
-          {t(lang, 'auth_login_title')}
-        </h1>
+      <div className={s.wrap}>
+        <h1 className={s.title}>{t(lang, 'auth_login_title')}</h1>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-5" noValidate>
+        <form onSubmit={handleSubmit} className={s.form} noValidate>
           <Field
             label={t(lang, 'auth_login_id')}
             value={identifier}
@@ -78,16 +77,16 @@ export default function Login() {
             required
           />
 
-          {errors.form && <p className="le-form-error m-0">{errors.form}</p>}
+          {errors.form && <p className={s.formError}>{errors.form}</p>}
 
-          <button type="submit" className="le-btn-primary mt-2" disabled={submitting}>
+          <button type="submit" className={s.submit} disabled={submitting}>
             {submitting ? t(lang, 'auth_login_submitting') : t(lang, 'auth_login_submit')}
           </button>
         </form>
 
-        <p className="m-0 text-center font-mono text-[11px] tracking-[0.06em] text-fg-3">
+        <p className={s.alt}>
           {t(lang, 'auth_login_no_account')}{' '}
-          <Link to="/register" className="le-link">
+          <Link to="/register" className={s.altLink}>
             {t(lang, 'auth_login_register_link')}
           </Link>
         </p>

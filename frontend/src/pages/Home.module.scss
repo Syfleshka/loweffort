@@ -1,0 +1,14 @@
+@use '../styles/tokens' as t;
+
+.section {
+  display: flex;
+  flex: 1 1 0%;
+  flex-direction: column;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  column-gap: t.$space-6;
+  row-gap: t.$space-7;
+}

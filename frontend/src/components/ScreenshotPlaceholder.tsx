@@ -1,3 +1,5 @@
+import s from './ScreenshotPlaceholder.module.scss'
+
 interface Props {
   label: string
 }
@@ -6,7 +8,7 @@ export function ScreenshotPlaceholder({ label }: Props) {
   const id = `sg-${label.replace(/\W+/g, '-').toLowerCase()}`
   return (
     <svg
-      className="block h-full w-full"
+      className={s.svg}
       viewBox="0 0 400 260"
       preserveAspectRatio="xMidYMid slice"
       aria-hidden="true"

@@ -1,4 +1,5 @@
 import { useId } from 'react'
+import s from './Field.module.scss'
 
 interface Props {
   label: string
@@ -25,12 +26,9 @@ export function Field({
 }: Props) {
   const id = useId()
   return (
-    <div className="flex flex-col gap-2">
-      <label
-        htmlFor={id}
-        className="flex items-baseline gap-2 font-mono text-[11px] tracking-[0.06em] text-fg-3"
-      >
-        <span className="text-fg-2">{label}</span>
+    <div className={s.field}>
+      <label htmlFor={id} className={s.label}>
+        <span className={s.labelMain}>{label}</span>
         {hint && <span>{hint}</span>}
       </label>
       <input
@@ -42,9 +40,9 @@ export function Field({
         autoFocus={autoFocus}
         required={required}
         aria-invalid={!!error}
-        className={`le-input ${error ? 'is-error' : ''}`}
+        className={`${s.input} ${error ? s.invalid : ''}`}
       />
-      {error && <span className="le-form-error">{error}</span>}
+      {error && <span className={s.error}>{error}</span>}
     </div>
   )
 }

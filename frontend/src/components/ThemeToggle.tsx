@@ -1,6 +1,7 @@
 import type { Theme } from '../lib/useTheme'
 import type { Lang } from '../lib/i18n'
 import { t } from '../lib/i18n'
+import s from './ThemeToggle.module.scss'
 
 interface Props {
   theme: Theme
@@ -10,9 +11,10 @@ interface Props {
 
 export function ThemeToggle({ theme, setTheme, lang }: Props) {
   return (
-    <div className="le-theme-pill" role="group" aria-label="Theme">
+    <div className={s.pill} role="group" aria-label="Theme">
       <button
         type="button"
+        className={s.btn}
         data-active={theme === 'light'}
         onClick={() => setTheme('light')}
         aria-label={t(lang, 'theme_light')}
@@ -37,6 +39,7 @@ export function ThemeToggle({ theme, setTheme, lang }: Props) {
       </button>
       <button
         type="button"
+        className={s.btn}
         data-active={theme === 'dark'}
         onClick={() => setTheme('dark')}
         aria-label={t(lang, 'theme_dark')}

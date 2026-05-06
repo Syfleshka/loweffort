@@ -6,6 +6,7 @@ import { t } from '../lib/i18n'
 import { Layout } from '../components/Layout'
 import { GameCard, GameCardSkeleton } from '../components/GameCard'
 import { StatusNote } from '../components/StatusNote'
+import s from './Home.module.scss'
 
 export default function Home() {
   const { lang } = useApp()
@@ -28,11 +29,11 @@ export default function Home() {
 
   return (
     <Layout>
-      <section id="all" className="flex flex-1 flex-col">
+      <section id="all" className={s.section}>
         {error ? (
           <StatusNote>{t(lang, 'state_error')}</StatusNote>
         ) : games === null ? (
-          <div className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-x-6 gap-y-7">
+          <div className={s.grid}>
             {Array.from({ length: 8 }).map((_, i) => (
               <GameCardSkeleton key={i} />
             ))}
@@ -40,7 +41,7 @@ export default function Home() {
         ) : games.length === 0 ? (
           <StatusNote>{t(lang, 'state_empty')}</StatusNote>
         ) : (
-          <div className="grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-x-6 gap-y-7">
+          <div className={s.grid}>
             {games.map((g) => (
               <GameCard key={g.id} game={g} lang={lang} />
             ))}

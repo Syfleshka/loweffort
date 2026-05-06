@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { Game } from '../../types'
 import { useApp } from '../../lib/appContext'
 import { t } from '../../lib/i18n'
+import s from './TicTacToe.module.scss'
 
 type Player = 'X' | 'O'
 type Cell = Player | null
@@ -56,9 +57,9 @@ export function TicTacToe({ game }: { game: Game }) {
     const winNext = findWinner(next)
     setBoard(next)
     if (winNext) {
-      setStats((s) => ({ ...s, [winNext.winner]: s[winNext.winner] + 1 }))
+      setStats((cur) => ({ ...cur, [winNext.winner]: cur[winNext.winner] + 1 }))
     } else if (next.every((c) => c !== null)) {
-      setStats((s) => ({ ...s, draw: s.draw + 1 }))
+      setStats((cur) => ({ ...cur, draw: cur.draw + 1 }))
     } else {
       setTurn(turn === 'X' ? 'O' : 'X')
     }
@@ -78,29 +79,17 @@ export function TicTacToe({ game }: { game: Game }) {
         : t(lang, 'ttt_turn').replace('{p}', playerGlyph(turn))
 
   return (
-    <article className="flex flex-col items-center gap-10">
-      <header className="flex w-full max-w-[640px] flex-col items-center gap-3 text-center">
-        <h1 className="m-0 font-serif text-[44px] font-medium leading-[1.05] tracking-[-0.015em] max-[920px]:text-[36px]">
-          {game.title}
-        </h1>
-        <p className="m-0 font-mono text-[11px] tracking-[0.06em] text-fg-3">
-          {t(lang, 'ttt_mode_hint')}
-        </p>
+    <article className={s.root}>
+      <header className={s.header}>
+        <h1 className={s.title}>{game.title}</h1>
+        <p className={s.hint}>{t(lang, 'ttt_mode_hint')}</p>
       </header>
 
-      <p
-        className="m-0 font-serif text-[20px] tracking-[-0.005em]"
-        aria-live="polite"
-        data-status={status}
-      >
+      <p className={s.status} aria-live="polite" data-status={status}>
         {statusText}
       </p>
 
-      <div
-        className="grid w-full max-w-[360px] grid-cols-3 border border-line"
-        role="grid"
-        aria-label={game.title}
-      >
+      <div className={s.board} role="grid" aria-label={game.title}>
         {board.map((cell, i) => {
           const isWinning = win?.line.includes(i) ?? false
           const isInteractive = !cell && !finished
@@ -112,18 +101,13 @@ export function TicTacToe({ game }: { game: Game }) {
               onClick={() => play(i)}
               disabled={!isInteractive}
               aria-label={cell ? `${cell} at ${i + 1}` : `empty cell ${i + 1}`}
-              className={[
-                'group relative flex aspect-square items-center justify-center bg-bg transition-colors duration-150',
-                i % 3 < 2 ? 'border-r border-line' : '',
-                i < 6 ? 'border-b border-line' : '',
-                isInteractive ? 'cursor-pointer hover:bg-bg-2' : 'cursor-default',
-              ].join(' ')}
+              className={s.cell}
             >
               {cell ? (
                 <Mark kind={cell} highlighted={isWinning} />
               ) : (
                 isInteractive && (
-                  <span className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-150 group-hover:opacity-30">
+                  <span className={s.ghost}>
                     <Mark kind={turn} animated={false} />
                   </span>
                 )
@@ -133,17 +117,12 @@ export function TicTacToe({ game }: { game: Game }) {
         })}
       </div>
 
-      <button
-        type="button"
-        onClick={reset}
-        className="le-btn-auth"
-        aria-label={t(lang, 'ttt_new_game')}
-      >
+      <button type="button" onClick={reset} className={s.newGame}>
         {t(lang, 'ttt_new_game').toLowerCase()}
       </button>
 
-      <dl className="flex items-center gap-6 font-mono text-[11px] tracking-[0.06em] text-fg-3">
-        <span className="text-fg-2">{t(lang, 'ttt_score')}</span>
+      <dl className={s.score}>
+        <span className={s.scoreHeading}>{t(lang, 'ttt_score')}</span>
         <ScoreItem label={t(lang, 'ttt_player_x')} value={stats.X} />
         <ScoreItem label={t(lang, 'ttt_player_o')} value={stats.O} />
         <ScoreItem label={t(lang, 'ttt_score_draws')} value={stats.draw} />
@@ -154,9 +133,9 @@ export function TicTacToe({ game }: { game: Game }) {
 
 function ScoreItem({ label, value }: { label: string; value: number }) {
   return (
-    <span className="inline-flex items-baseline gap-2">
-      <dt className="text-fg-3">{label}</dt>
-      <dd className="m-0 font-semibold text-fg">{value}</dd>
+    <span className={s.scoreItem}>
+      <dt className={s.scoreLabel}>{label}</dt>
+      <dd className={s.scoreValue}>{value}</dd>
     </span>
   )
 }
@@ -171,10 +150,10 @@ function Mark({
   animated?: boolean
 }) {
   const stroke = highlighted ? 'var(--le-accent)' : 'currentColor'
-  const base = animated ? 'le-mark-stroke' : ''
+  const cls = (mod: string) => (animated ? `${s.stroke} ${mod}` : '')
   if (kind === 'X') {
     return (
-      <svg viewBox="0 0 100 100" className="h-1/2 w-1/2" aria-hidden="true">
+      <svg viewBox="0 0 100 100" className={s.mark} aria-hidden="true">
         <line
           x1="22"
           y1="22"
@@ -184,7 +163,7 @@ function Mark({
           strokeWidth="6"
           strokeLinecap="round"
           pathLength="100"
-          className={`${base} ${animated ? 'le-mark-x1' : ''}`}
+          className={cls(s.strokeX1)}
         />
         <line
           x1="78"
@@ -195,13 +174,13 @@ function Mark({
           strokeWidth="6"
           strokeLinecap="round"
           pathLength="100"
-          className={`${base} ${animated ? 'le-mark-x2' : ''}`}
+          className={cls(s.strokeX2)}
         />
       </svg>
     )
   }
   return (
-    <svg viewBox="0 0 100 100" className="h-1/2 w-1/2" aria-hidden="true">
+    <svg viewBox="0 0 100 100" className={s.mark} aria-hidden="true">
       <circle
         cx="50"
         cy="50"
@@ -210,7 +189,7 @@ function Mark({
         strokeWidth="6"
         fill="none"
         pathLength="100"
-        className={`${base} ${animated ? 'le-mark-o' : ''}`}
+        className={cls(s.strokeO)}
       />
     </svg>
   )

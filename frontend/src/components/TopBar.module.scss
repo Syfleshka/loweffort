@@ -1,0 +1,61 @@
+@use '../styles/tokens' as t;
+@use '../styles/mixins' as m;
+
+.bar {
+  position: sticky;
+  top: 0;
+  z-index: t.$z-topbar;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: t.$space-8;
+  padding: 22px t.$pad-x;
+  border-bottom: 1px solid var(--color-line);
+  background: color-mix(in oklch, var(--color-bg) 88%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  @include m.mobile {
+    padding-left: t.$pad-x-mobile;
+    padding-right: t.$pad-x-mobile;
+  }
+}
+
+.logo {
+  @include m.serif(t.$fs-26, 600, t.$tracking-tight-lg, t.$lh-tight);
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  gap: t.$space-4;
+}
+
+.user {
+  font-family: t.$font-mono;
+  font-size: t.$fs-13;
+  color: var(--color-fg-2);
+}
+
+.authBtn {
+  @include m.button-reset;
+  font-family: t.$font-mono;
+  font-size: t.$fs-13;
+  text-transform: lowercase;
+  padding: 4px 0;
+  color: var(--color-fg);
+  text-decoration: underline;
+  text-decoration-color: var(--color-fg);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  transition:
+    color t.$dur-quick,
+    text-decoration-color t.$dur-quick,
+    text-decoration-thickness t.$dur-quick;
+
+  &:hover {
+    color: var(--le-accent);
+    text-decoration-color: var(--le-accent);
+    text-decoration-thickness: 2px;
+  }
+}

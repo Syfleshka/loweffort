@@ -1,0 +1,77 @@
+@use 'tokens' as t;
+
+// ── Theme tokens ─────────────────────────────────────────────
+:root {
+  --color-bg: oklch(0.985 0 0);
+  --color-bg-2: oklch(0.965 0 0);
+  --color-fg: oklch(0.18 0 0);
+  --color-fg-2: oklch(0.42 0 0);
+  --color-fg-3: oklch(0.6 0 0);
+  --color-line: oklch(0.9 0 0);
+  --color-line-2: oklch(0.82 0 0);
+  --color-error: oklch(0.55 0.18 25);
+
+  // Accent — buttons only, on hover. Forest green default.
+  --le-accent: #3f7d54;
+}
+
+.dark {
+  --color-bg: oklch(0.16 0 0);
+  --color-bg-2: oklch(0.22 0 0);
+  --color-fg: oklch(0.96 0 0);
+  --color-fg-2: oklch(0.78 0 0);
+  --color-fg-3: oklch(0.6 0 0);
+  --color-line: oklch(0.32 0 0);
+  --color-line-2: oklch(0.42 0 0);
+}
+
+// ── Reset ────────────────────────────────────────────────────
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: t.$font-serif;
+  font-feature-settings: 'kern', 'liga', 'onum';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+// ── Global keyframes ─────────────────────────────────────────
+// Referenced by Footer (live online dot) and TicTacToe (mark draw).
+@keyframes le-pulse {
+  0% {
+    box-shadow: 0 0 0 0 color-mix(in oklch, var(--color-fg) 55%, transparent);
+  }
+  70% {
+    box-shadow: 0 0 0 8px color-mix(in oklch, var(--color-fg) 0%, transparent);
+  }
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in oklch, var(--color-fg) 0%, transparent);
+  }
+}
+
+@keyframes le-mark-draw {
+  from {
+    stroke-dashoffset: 100;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}

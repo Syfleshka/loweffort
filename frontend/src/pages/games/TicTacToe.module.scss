@@ -1,0 +1,177 @@
+@use '../../styles/tokens' as t;
+@use '../../styles/mixins' as m;
+
+.root {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: t.$space-9;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: t.$space-4;
+  width: 100%;
+  max-width: 640px;
+  text-align: center;
+}
+
+.title {
+  margin: 0;
+  @include m.serif(t.$fs-44, 500, t.$tracking-tight-md, 1.05);
+
+  @include m.mobile {
+    font-size: t.$fs-36;
+  }
+}
+
+.hint {
+  margin: 0;
+  @include m.mono(t.$fs-11, t.$tracking-mono);
+  color: var(--color-fg-3);
+}
+
+.status {
+  margin: 0;
+  @include m.serif(t.$fs-20, 400, t.$tracking-tight-xs);
+}
+
+.board {
+  width: 100%;
+  max-width: 360px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border: 1px solid var(--color-line);
+}
+
+.cell {
+  position: relative;
+  display: flex;
+  aspect-ratio: 1 / 1;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg);
+  border: 0;
+  cursor: pointer;
+  transition: background-color t.$dur-quick;
+
+  &:nth-child(3n):not(:nth-child(9)) {
+    border-right: 0;
+  }
+  &:not(:nth-child(3n)) {
+    border-right: 1px solid var(--color-line);
+  }
+  &:nth-child(-n + 6) {
+    border-bottom: 1px solid var(--color-line);
+  }
+
+  &:not(:disabled):hover {
+    background: var(--color-bg-2);
+  }
+
+  &:disabled {
+    cursor: default;
+  }
+}
+
+.ghost {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity t.$dur-quick;
+
+  .cell:hover & {
+    opacity: 0.3;
+  }
+}
+
+.newGame {
+  @include m.button-reset;
+  font-family: t.$font-mono;
+  font-size: t.$fs-13;
+  text-transform: lowercase;
+  padding: 4px 0;
+  color: var(--color-fg);
+  text-decoration: underline;
+  text-decoration-color: var(--color-fg);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  transition:
+    color t.$dur-quick,
+    text-decoration-color t.$dur-quick,
+    text-decoration-thickness t.$dur-quick;
+
+  &:hover {
+    color: var(--le-accent);
+    text-decoration-color: var(--le-accent);
+    text-decoration-thickness: 2px;
+  }
+}
+
+.score {
+  display: flex;
+  align-items: center;
+  gap: t.$space-6;
+  margin: 0;
+  @include m.mono(t.$fs-11, t.$tracking-mono);
+  color: var(--color-fg-3);
+}
+
+.scoreHeading {
+  color: var(--color-fg-2);
+}
+
+.scoreItem {
+  display: inline-flex;
+  align-items: baseline;
+  gap: t.$space-3;
+}
+
+.scoreLabel {
+  color: var(--color-fg-3);
+}
+
+.scoreValue {
+  margin: 0;
+  font-weight: 600;
+  color: var(--color-fg);
+}
+
+// ── Mark — SVG draw-on-place animation ───────────────────────
+.mark {
+  display: block;
+  width: 50%;
+  height: 50%;
+}
+
+.stroke {
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  animation: le-mark-draw 200ms ease-out forwards;
+  transition: stroke t.$dur-quick;
+
+  @include m.reduced-motion {
+    animation: none;
+    stroke-dasharray: none;
+    stroke-dashoffset: 0;
+  }
+}
+
+.strokeX1 {
+  animation-duration: 180ms;
+}
+
+.strokeX2 {
+  animation-duration: 180ms;
+  animation-delay: 160ms;
+}
+
+.strokeO {
+  animation-duration: 360ms;
+}

@@ -1,4 +1,5 @@
 import type { Lang } from '../lib/i18n'
+import s from './LangToggle.module.scss'
 
 interface Props {
   lang: Lang
@@ -7,12 +8,22 @@ interface Props {
 
 export function LangToggle({ lang, setLang }: Props) {
   return (
-    <div className="le-lang inline-flex items-center gap-[6px] text-line-2" role="group" aria-label="Language">
-      <button type="button" data-active={lang === 'ru'} onClick={() => setLang('ru')}>
+    <div className={s.group} role="group" aria-label="Language">
+      <button
+        type="button"
+        className={s.btn}
+        data-active={lang === 'ru'}
+        onClick={() => setLang('ru')}
+      >
         ru
       </button>
       <span aria-hidden="true">/</span>
-      <button type="button" data-active={lang === 'en'} onClick={() => setLang('en')}>
+      <button
+        type="button"
+        className={s.btn}
+        data-active={lang === 'en'}
+        onClick={() => setLang('en')}
+      >
         en
       </button>
     </div>

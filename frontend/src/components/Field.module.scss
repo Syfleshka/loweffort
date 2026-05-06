@@ -1,0 +1,52 @@
+@use '../styles/tokens' as t;
+@use '../styles/mixins' as m;
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: t.$space-3;
+}
+
+.label {
+  display: flex;
+  align-items: baseline;
+  gap: t.$space-3;
+  @include m.mono(t.$fs-11, t.$tracking-mono);
+  color: var(--color-fg-3);
+}
+
+.labelMain {
+  color: var(--color-fg-2);
+}
+
+.input {
+  display: block;
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--color-line);
+  border-radius: t.$radius-sm;
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: t.$font-serif;
+  font-size: t.$fs-16;
+  line-height: 1.3;
+  transition: border-color t.$dur-quick;
+
+  &::placeholder {
+    color: var(--color-fg-3);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--le-accent);
+  }
+
+  &.invalid {
+    border-color: var(--color-error);
+  }
+}
+
+.error {
+  @include m.mono(t.$fs-11, t.$tracking-mono);
+  color: var(--color-error);
+}

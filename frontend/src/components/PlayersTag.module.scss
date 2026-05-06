@@ -1,0 +1,29 @@
+@use '../styles/tokens' as t;
+@use '../styles/mixins' as m;
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: t.$space-3;
+  white-space: nowrap;
+  @include m.mono(t.$fs-11, t.$tracking-mono);
+  color: var(--color-fg-2);
+}
+
+.dots {
+  display: inline-flex;
+  gap: 3px;
+}
+
+.dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-fg);
+}
+
+.dotEmpty {
+  background: transparent;
+  border: 1px solid var(--color-line-2);
+}
