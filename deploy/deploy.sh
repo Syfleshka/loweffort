@@ -35,6 +35,8 @@ cd "$PROJECT_DIR/backend"
 npm ci
 npx prisma generate
 npx prisma migrate deploy
+# Каталог игр — идемпотентный upsert, безопасно гонять каждый деплой.
+npm run seed
 npm run build
 
 # ─── Frontend ──────────────────────────────────────────────────
