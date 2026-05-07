@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
 import type { Game } from '../../types'
 import { useApp } from '../../lib/appContext'
 import { t, type StringKey } from '../../lib/i18n'
@@ -43,7 +42,7 @@ export function TicTacToeOnline({
   kickoff: OnlineKickoff
   onExit: () => void
 }) {
-  const { lang, user } = useApp()
+  const { lang, identity } = useApp()
   const [phase, setPhase] = useState<Phase>('connecting')
   const [state, setState] = useState<PublicState | null>(null)
   const [errorKey, setErrorKey] = useState<StringKey | null>(null)
@@ -73,6 +72,9 @@ export function TicTacToeOnline({
 
   // ── Kick off the chosen action exactly once on mount ───────
   useEffect(() => {
+    // Wait until /api/me has set the (guest or auth) cookie so the socket
+    // handshake won't be rejected.
+    if (!identity) return
     if (kickedOff.current) return
     kickedOff.current = true
     const socket = getSocket()
@@ -98,7 +100,7 @@ export function TicTacToeOnline({
     } else {
       socket.emit('ttt:join_room', { code: kickoff.code }, handleAck)
     }
-  }, [kickoff])
+  }, [kickoff, identity])
 
   // ── Cleanup: leave/cancel server-side when unmounting ──────
   useEffect(() => {
@@ -114,25 +116,6 @@ export function TicTacToeOnline({
     // We deliberately don't depend on `state` — only run on unmount.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-  if (!user) {
-    return (
-      <article className={s.root}>
-        <header className={s.header}>
-          <h1 className={s.title}>{game.title}</h1>
-          <p className={s.hint}>{t(lang, 'ttt_signin_required')}</p>
-        </header>
-        <div className={o.actions}>
-          <Link to="/login" className={o.linkBtn}>
-            {t(lang, 'nav_login')}
-          </Link>
-          <button type="button" onClick={onExit} className={s.exit}>
-            {t(lang, 'ttt_back_to_modes')}
-          </button>
-        </div>
-      </article>
-    )
-  }
 
   if (phase === 'error') {
     return (
@@ -188,11 +171,11 @@ function Match({
   state: PublicState
   onExit: () => void
 }) {
-  const { lang, user } = useApp()
+  const { lang, identity } = useApp()
   const myRole: Mark | null =
-    state.players.X?.userId === user?.id
+    state.players.X?.userId === identity?.id
       ? 'X'
-      : state.players.O?.userId === user?.id
+      : state.players.O?.userId === identity?.id
         ? 'O'
         : null
   const opponent =

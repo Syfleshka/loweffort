@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import type { Game } from '../../types'
+import { useApp } from '../../lib/appContext'
 import { getSocket } from '../../lib/socket'
 import type { Cell, Orientation, Ship } from './BattleshipsTypes'
 import type { RadarMark } from './BattleshipsBoard'
@@ -22,6 +23,7 @@ export function BattleshipsOnline({
   kickoff: BsKickoff
   onExit: () => void
 }) {
+  const { identity } = useApp()
   const [phase, setPhase] = useState<Phase>('connecting')
   const [connectError, setConnectError] = useState<string | null>(null)
 
@@ -221,6 +223,9 @@ export function BattleshipsOnline({
   }, [])
 
   useEffect(() => {
+    // Wait for /api/me to have set the (guest or auth) cookie before opening
+    // the socket — otherwise the handshake would be rejected.
+    if (!identity) return
     if (kickedOff.current) return
     kickedOff.current = true
     const socket = getSocket()
@@ -241,7 +246,7 @@ export function BattleshipsOnline({
         }
       })
     }
-  }, [kickoff])
+  }, [kickoff, identity])
 
   useEffect(() => {
     return () => {

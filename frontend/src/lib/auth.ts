@@ -19,6 +19,22 @@ export async function fetchSession(): Promise<SessionResponse | null> {
   }
 }
 
+export interface IdentityResponse {
+  id: string
+  username: string
+  name: string
+  isGuest: boolean
+}
+
+export async function fetchIdentity(): Promise<IdentityResponse | null> {
+  try {
+    const { data } = await api.get<IdentityResponse>('/me')
+    return data
+  } catch {
+    return null
+  }
+}
+
 interface RegisterInput {
   username: string
   email?: string

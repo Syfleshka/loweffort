@@ -1,32 +1,39 @@
 import { useCallback, useEffect, useState, type ReactNode } from 'react'
 import { useTheme } from './useTheme'
 import { useLang } from './useLang'
-import { Ctx } from './appContext'
-import { fetchSession, logout as authLogout } from './auth'
+import { Ctx, type Identity } from './appContext'
+import { fetchIdentity, fetchSession, logout as authLogout } from './auth'
 import type { User } from '../types'
 
-// `undefined` = session fetch in flight; `null` = unauthenticated; `User` = signed in.
+// `undefined` = first identity fetch in flight; `null` = nothing yet; `User` = signed in.
 type UserState = User | null | undefined
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const { theme, setTheme } = useTheme()
   const { lang, setLang } = useLang()
   const [user, setUser] = useState<UserState>(undefined)
+  const [identity, setIdentity] = useState<Identity | null>(null)
 
   const refreshSession = useCallback(async () => {
-    const session = await fetchSession()
+    const [session, ident] = await Promise.all([fetchSession(), fetchIdentity()])
     setUser(session?.user ?? null)
+    setIdentity(ident)
   }, [])
 
   const signOut = useCallback(async () => {
     await authLogout()
     setUser(null)
+    // After signing out the backend issues a fresh guest cookie on the next call.
+    const ident = await fetchIdentity()
+    setIdentity(ident)
   }, [])
 
   useEffect(() => {
     let cancelled = false
-    fetchSession().then((session) => {
-      if (!cancelled) setUser(session?.user ?? null)
+    Promise.all([fetchSession(), fetchIdentity()]).then(([session, ident]) => {
+      if (cancelled) return
+      setUser(session?.user ?? null)
+      setIdentity(ident)
     })
     return () => {
       cancelled = true
@@ -41,6 +48,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         lang,
         setLang,
         user: user ?? null,
+        identity,
         isAuthLoading: user === undefined,
         refreshSession,
         signOut,

@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import type { Game } from '../../types'
 import { BattleshipsOnline, type BsKickoff } from './BattleshipsOnline'
-import { useApp } from '../../lib/appContext'
 import s from './Battleships.module.scss'
 
 type Mode = { kind: 'select' } | { kind: 'online'; kickoff: BsKickoff }
@@ -17,19 +16,9 @@ export function Battleships({ game }: { game: Game }) {
 }
 
 function ModeSelector({ game, onPick }: { game: Game; onPick: (m: Mode) => void }) {
-  const { user } = useApp()
   const [code, setCode] = useState('')
   const trimmed = code.trim().toUpperCase()
   const codeOk = /^[A-Z0-9]{5}$/.test(trimmed)
-
-  if (!user) {
-    return (
-      <div className={s.screen}>
-        <h1 className={s.screenTitle}>⚓ {game.title}</h1>
-        <p className={s.screenText}>Для игры необходимо войти в аккаунт.</p>
-      </div>
-    )
-  }
 
   function handleJoinSubmit(e: React.FormEvent) {
     e.preventDefault()

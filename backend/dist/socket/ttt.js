@@ -1,17 +1,31 @@
 const matches = new Map();
 const codeIndex = new Map(); // code → matchId
 const randomQueue = [];
-const LINES = [
-    [0, 1, 2], [3, 4, 5], [6, 7, 8],
-    [0, 3, 6], [1, 4, 7], [2, 5, 8],
-    [0, 4, 8], [2, 4, 6],
-];
+const BOARD_SIZE = 10;
+const WIN_COUNT = 5;
 function findWinner(board) {
-    for (const line of LINES) {
-        const [a, b, c] = line;
-        const v = board[a];
-        if (v && v === board[b] && v === board[c]) {
-            return { winner: v, line: [a, b, c] };
+    const N = BOARD_SIZE;
+    const W = WIN_COUNT;
+    const dirs = [[0, 1], [1, 0], [1, 1], [1, -1]];
+    for (let r = 0; r < N; r++) {
+        for (let c = 0; c < N; c++) {
+            const v = board[r * N + c];
+            if (!v)
+                continue;
+            for (const [dr, dc] of dirs) {
+                const line = [];
+                for (let k = 0; k < W; k++) {
+                    const nr = r + dr * k;
+                    const nc = c + dc * k;
+                    if (nr < 0 || nr >= N || nc < 0 || nc >= N)
+                        break;
+                    if (board[nr * N + nc] !== v)
+                        break;
+                    line.push(nr * N + nc);
+                }
+                if (line.length === W)
+                    return { winner: v, line };
+            }
         }
     }
     return null;
@@ -53,7 +67,7 @@ function createMatch(code) {
     const m = {
         id: makeMatchId(),
         code,
-        board: Array(9).fill(null),
+        board: Array(100).fill(null),
         turn: 'X',
         status: 'waiting',
         winner: null,
@@ -211,7 +225,7 @@ export function registerTttHandlers(io, socket) {
         if (match.status !== 'active')
             return cb?.({ ok: false, error: 'not_active' });
         const idx = payload?.index;
-        if (typeof idx !== 'number' || idx < 0 || idx > 8 || !Number.isInteger(idx)) {
+        if (typeof idx !== 'number' || idx < 0 || idx > 99 || !Number.isInteger(idx)) {
             return cb?.({ ok: false, error: 'invalid_index' });
         }
         if (match.board[idx] !== null)
