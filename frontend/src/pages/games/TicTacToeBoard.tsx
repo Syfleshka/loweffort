@@ -1,4 +1,4 @@
-import type { Cell, Mark } from './tictactoeLogic'
+import { BOARD_SIZE, type Cell, type Mark } from './tictactoeLogic'
 import s from './TicTacToe.module.scss'
 
 interface BoardProps {
@@ -39,7 +39,39 @@ export function Board({ board, ghostMark, winningLine, onCellClick, ariaLabel }:
           </button>
         )
       })}
+      {winningLine && winningLine.length >= 2 && <WinLine line={winningLine} />}
     </div>
+  )
+}
+
+function WinLine({ line }: { line: readonly number[] }) {
+  const N = BOARD_SIZE
+  const cell = 100 / N
+  const center = (idx: number) => ({
+    x: (idx % N + 0.5) * cell,
+    y: (Math.floor(idx / N) + 0.5) * cell,
+  })
+  const a = center(line[0])
+  const b = center(line[line.length - 1])
+  return (
+    <svg
+      className={s.winLine}
+      viewBox="0 0 100 100"
+      preserveAspectRatio="none"
+      aria-hidden="true"
+    >
+      <line
+        x1={a.x}
+        y1={a.y}
+        x2={b.x}
+        y2={b.y}
+        stroke="var(--le-accent)"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+        pathLength="1"
+        className={s.winLineStroke}
+      />
+    </svg>
   )
 }
 
