@@ -1,0 +1,700 @@
+@use '../../styles/tokens' as t;
+@use '../../styles/mixins' as m;
+
+// ── Sea palette + root layout ────────────────────────────────────
+.root {
+  // Sea-specific CSS variables (light mode)
+  --bs-cell: 34px;
+  --bs-water: oklch(0.92 0.028 222);
+  --bs-water-border: oklch(0.83 0.035 222);
+  --bs-water-hover: oklch(0.86 0.038 222);
+  --bs-ship: oklch(0.68 0 0);
+  --bs-ship-border: oklch(0.52 0 0);
+  --bs-sunk: oklch(0.45 0.1 22);
+  --bs-sunk-border: oklch(0.35 0.12 22);
+  --bs-hit: oklch(0.78 0.13 32);
+  --bs-hit-border: oklch(0.62 0.15 32);
+  --bs-miss: oklch(0.85 0.025 228);
+  --bs-miss-border: oklch(0.73 0.03 228);
+  --bs-mine: oklch(0.88 0.1 75);
+  --bs-mine-border: oklch(0.72 0.12 72);
+  --bs-ghost-ok: oklch(0.88 0.1 145);
+  --bs-ghost-bad: oklch(0.85 0.1 22);
+  --bs-radar: oklch(0.95 0.07 88);
+  --bs-strike-hover: oklch(0.88 0.06 280);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: t.$space-8;
+  width: 100%;
+}
+
+:global(.dark) .root {
+  --bs-water: oklch(0.27 0.03 228);
+  --bs-water-border: oklch(0.34 0.04 228);
+  --bs-water-hover: oklch(0.32 0.04 228);
+  --bs-ship: oklch(0.42 0 0);
+  --bs-ship-border: oklch(0.32 0 0);
+  --bs-sunk: oklch(0.35 0.1 22);
+  --bs-sunk-border: oklch(0.26 0.1 22);
+  --bs-hit: oklch(0.55 0.13 32);
+  --bs-hit-border: oklch(0.42 0.14 32);
+  --bs-miss: oklch(0.31 0.03 230);
+  --bs-miss-border: oklch(0.38 0.035 230);
+  --bs-mine: oklch(0.55 0.12 72);
+  --bs-mine-border: oklch(0.42 0.12 68);
+  --bs-ghost-ok: oklch(0.38 0.1 145);
+  --bs-ghost-bad: oklch(0.38 0.1 22);
+  --bs-radar: oklch(0.46 0.08 85);
+  --bs-strike-hover: oklch(0.36 0.07 280);
+}
+
+// ── Shared loading/auth screen ──────────────────────────────────
+.screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: t.$space-6;
+  padding: t.$space-10 0;
+  text-align: center;
+}
+
+.screenTitle {
+  margin: 0;
+  @include m.serif(t.$fs-36, 500, t.$tracking-tight-md, 1.05);
+}
+
+.screenText {
+  margin: 0;
+  @include m.mono(t.$fs-13, t.$tracking-mono);
+  color: var(--color-fg-2);
+}
+
+.screenError {
+  margin: 0;
+  @include m.mono(t.$fs-13, t.$tracking-mono);
+  color: var(--color-error);
+}
+
+// ── Header bar ───────────────────────────────────────────────────
+.header {
+  display: flex;
+  align-items: center;
+  gap: t.$space-5;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.headerTitle {
+  margin: 0;
+  @include m.serif(t.$fs-26, 500, t.$tracking-tight-sm, t.$lh-snug);
+  flex: 1;
+}
+
+.roomInfo {
+  display: flex;
+  align-items: center;
+  gap: t.$space-3;
+  @include m.mono(t.$fs-11, t.$tracking-mono);
+  color: var(--color-fg-2);
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-fg-3);
+}
+
+.dotOnline {
+  background: oklch(0.65 0.18 145);
+}
+
+.exitBtn {
+  @include m.button-reset;
+  @include m.mono(t.$fs-11, t.$tracking-mono);
+  color: var(--color-fg-3);
+  @include m.link-underline;
+}
+
+// ── Room code block ───────────────────────────────────────────────
+.codeBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: t.$space-3;
+  text-align: center;
+}
+
+.codeLabel {
+  margin: 0;
+  @include m.mono(t.$fs-11, t.$tracking-mono);
+  color: var(--color-fg-3);
+}
+
+.code {
+  @include m.serif(40px, 500, 0.2em, t.$lh-tight);
+  padding: t.$space-4 t.$space-7;
+  border: 1px solid var(--color-line);
+  border-radius: t.$radius-sm;
+  background: var(--color-bg-2);
+  user-select: all;
+}
+
+// ── Lobby ────────────────────────────────────────────────────────
+.lobby {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: t.$space-8;
+  max-width: 500px;
+  width: 100%;
+  padding: t.$space-6 0;
+  text-align: center;
+}
+
+.lobbyTitle {
+  margin: 0;
+  @include m.serif(t.$fs-44, 500, t.$tracking-tight-md, 1.05);
+}
+
+.tagline {
+  margin: 0;
+  @include m.mono(t.$fs-13, t.$tracking-mono);
+  color: var(--color-fg-2);
+}
+
+.lobbyCard {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: t.$space-5;
+  width: 100%;
+  padding: t.$space-7;
+  border: 1px solid var(--color-line);
+  border-radius: t.$radius-sm;
+  background: var(--color-bg-2);
+}
+
+.divider {
+  @include m.mono(t.$fs-11, t.$tracking-mono);
+  color: var(--color-fg-3);
+  text-align: center;
+}
+
+.joinRow {
+  display: flex;
+  gap: t.$space-3;
+}
+
+.joinInput {
+  flex: 1;
+  padding: t.$space-4 t.$space-5;
+  border: 1px solid var(--color-line);
+  border-radius: t.$radius-sm;
+  background: var(--color-bg);
+  color: var(--color-fg);
+  font-family: t.$font-mono;
+  font-size: t.$fs-16;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  transition: border-color t.$dur-quick;
+
+  &::placeholder {
+    color: var(--color-fg-3);
+    text-transform: none;
+    letter-spacing: t.$tracking-mono;
+    font-size: t.$fs-13;
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--le-accent);
+  }
+}
+
+.rules {
+  width: 100%;
+  text-align: left;
+  border: 1px solid var(--color-line);
+  border-radius: t.$radius-sm;
+  padding: t.$space-6;
+}
+
+.rulesTitle {
+  margin: 0 0 t.$space-4;
+  @include m.mono(t.$fs-11, t.$tracking-mono);
+  color: var(--color-fg-3);
+  text-transform: uppercase;
+  letter-spacing: t.$tracking-mono-wide;
+}
+
+.rulesList {
+  margin: 0;
+  padding: 0 0 0 t.$space-6;
+  display: flex;
+  flex-direction: column;
+  gap: t.$space-2;
+
+  li {
+    @include m.serif(t.$fs-14, 400, 0, t.$lh-base);
+    color: var(--color-fg-2);
+  }
+}
+
+// ── Shared buttons ───────────────────────────────────────────────
+.btnPrimary {
+  @include m.button-reset;
+  padding: t.$space-5 t.$space-8;
+  background: var(--color-fg);
+  color: var(--color-bg);
+  border-radius: t.$radius-sm;
+  font-family: t.$font-mono;
+  font-size: t.$fs-13;
+  text-transform: lowercase;
+  letter-spacing: t.$tracking-mono;
+  cursor: pointer;
+  transition: opacity t.$dur-quick;
+
+  &:hover:not(:disabled) {
+    opacity: 0.85;
+  }
+
+  &:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+}
+
+.btnSecondary {
+  @include m.button-reset;
+  padding: t.$space-3 t.$space-5;
+  border: 1px solid var(--color-line-2);
+  border-radius: t.$radius-sm;
+  background: transparent;
+  color: var(--color-fg);
+  font-family: t.$font-mono;
+  font-size: t.$fs-13;
+  text-transform: lowercase;
+  cursor: pointer;
+  transition:
+    background t.$dur-quick,
+    color t.$dur-quick;
+
+  &:hover:not(:disabled) {
+    background: var(--color-fg);
+    color: var(--color-bg);
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
+// ── Placement ────────────────────────────────────────────────────
+.placement {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: t.$space-8;
+}
+
+.placementMain {
+  display: flex;
+  gap: t.$space-8;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.placementControls {
+  display: flex;
+  flex-direction: column;
+  gap: t.$space-5;
+  min-width: 220px;
+  max-width: 280px;
+}
+
+.placementHeading {
+  margin: 0;
+  @include m.serif(t.$fs-20, 500, t.$tracking-tight-xs, t.$lh-snug);
+}
+
+.hint {
+  margin: 0;
+  @include m.mono(t.$fs-11, t.$tracking-mono);
+  color: var(--color-fg-3);
+  line-height: 1.6;
+
+  kbd {
+    display: inline-block;
+    padding: 1px 5px;
+    border: 1px solid var(--color-line-2);
+    border-radius: 3px;
+    font-family: t.$font-mono;
+    font-size: t.$fs-11;
+  }
+}
+
+// Fleet selector — shows ship sizes as small cell-grids
+.fleet {
+  display: flex;
+  flex-direction: column;
+  gap: t.$space-2;
+}
+
+.fleetItem {
+  @include m.button-reset;
+  display: flex;
+  align-items: center;
+  gap: t.$space-3;
+  padding: t.$space-2 t.$space-3;
+  border: 1px solid var(--color-line);
+  border-radius: t.$radius-sm;
+  background: var(--color-bg);
+  cursor: pointer;
+  transition:
+    border-color t.$dur-quick,
+    background t.$dur-quick;
+
+  &:hover:not(.fleetItemUsed) {
+    background: var(--color-bg-2);
+  }
+
+  &.fleetItemSelected {
+    border-color: var(--color-fg);
+    background: var(--color-bg-2);
+  }
+
+  &.fleetItemUsed {
+    opacity: 0.35;
+    cursor: default;
+  }
+}
+
+.fleetShip {
+  display: flex;
+  gap: 2px;
+}
+
+.fleetCell {
+  width: 14px;
+  height: 14px;
+  border-radius: 2px;
+  background: var(--bs-ship);
+  border: 1px solid var(--bs-ship-border);
+
+  .fleetItemUsed & {
+    background: var(--color-line-2);
+    border-color: var(--color-line);
+  }
+}
+
+.fleetLabel {
+  @include m.mono(t.$fs-11, t.$tracking-mono);
+  color: var(--color-fg-3);
+}
+
+.placementRow {
+  display: flex;
+  gap: t.$space-3;
+  flex-wrap: wrap;
+}
+
+// ── Game ─────────────────────────────────────────────────────────
+.game {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: t.$space-6;
+  width: 100%;
+}
+
+.statusBar {
+  display: flex;
+  align-items: center;
+  gap: t.$space-6;
+  @include m.serif(t.$fs-16, 400, t.$tracking-tight-xs);
+  min-height: t.$space-8;
+}
+
+.yourTurn {
+  color: var(--le-accent);
+}
+
+.enemyTurn {
+  color: var(--color-fg-2);
+}
+
+// Ability shop
+.shop {
+  display: flex;
+  align-items: center;
+  gap: t.$space-3;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.coins {
+  @include m.mono(t.$fs-13, t.$tracking-mono);
+  color: var(--color-fg-2);
+  padding: t.$space-2 t.$space-4;
+  border: 1px solid var(--color-line);
+  border-radius: t.$radius-sm;
+  min-width: 72px;
+  text-align: center;
+}
+
+.abilityBtn {
+  @include m.button-reset;
+  display: flex;
+  align-items: center;
+  gap: t.$space-2;
+  padding: t.$space-2 t.$space-4;
+  border: 1px solid var(--color-line);
+  border-radius: t.$radius-sm;
+  background: var(--color-bg);
+  font-family: t.$font-mono;
+  font-size: t.$fs-13;
+  letter-spacing: t.$tracking-mono;
+  cursor: pointer;
+  transition:
+    background t.$dur-quick,
+    border-color t.$dur-quick,
+    color t.$dur-quick;
+
+  &:hover:not(:disabled) {
+    background: var(--color-bg-2);
+    border-color: var(--color-line-2);
+  }
+
+  &.abilityActive {
+    background: var(--color-fg);
+    color: var(--color-bg);
+    border-color: var(--color-fg);
+  }
+
+  &:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+}
+
+.cost {
+  @include m.mono(t.$fs-11, t.$tracking-mono);
+  opacity: 0.65;
+}
+
+.rotateBtn {
+  @include m.button-reset;
+  padding: t.$space-2 t.$space-4;
+  border: 1px solid var(--color-line-2);
+  border-radius: t.$radius-sm;
+  font-family: t.$font-mono;
+  font-size: t.$fs-16;
+  cursor: pointer;
+  background: var(--color-bg-2);
+  transition: background t.$dur-quick;
+
+  &:hover {
+    background: var(--color-line);
+  }
+}
+
+.info {
+  @include m.mono(t.$fs-11, t.$tracking-mono);
+  color: var(--color-fg-3);
+  text-align: center;
+}
+
+.error {
+  @include m.mono(t.$fs-13, t.$tracking-mono);
+  color: var(--color-error);
+  text-align: center;
+}
+
+.boards {
+  display: flex;
+  gap: t.$space-8;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+// ── Board ─────────────────────────────────────────────────────────
+.boardWrap {
+  display: flex;
+  flex-direction: column;
+  gap: t.$space-3;
+  transition: opacity t.$dur-medium;
+
+  &.boardTurn {
+    .board {
+      box-shadow: 0 0 0 2px var(--le-accent);
+    }
+  }
+}
+
+.boardTitle {
+  @include m.mono(t.$fs-11, t.$tracking-mono-wide);
+  color: var(--color-fg-3);
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.board {
+  display: grid;
+  grid-template-columns: 20px repeat(10, var(--bs-cell));
+  grid-template-rows: 20px repeat(10, var(--bs-cell));
+  border: 1px solid var(--color-line);
+  border-radius: t.$radius-sm;
+  overflow: hidden;
+  user-select: none;
+
+  &.boardDisabled {
+    opacity: 0.7;
+  }
+}
+
+// Axis labels
+.corner {
+  background: var(--color-bg-2);
+}
+
+.axisCol,
+.axisRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg-2);
+  @include m.mono(t.$fs-11, 0);
+  color: var(--color-fg-3);
+  font-size: 10px;
+}
+
+// Cell base
+.cell {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bs-water);
+  border-right: 1px solid var(--bs-water-border);
+  border-bottom: 1px solid var(--bs-water-border);
+  cursor: default;
+  transition:
+    background t.$dur-quick,
+    box-shadow t.$dur-quick;
+  font-size: 11px;
+  overflow: hidden;
+
+  &.cellShip {
+    background: var(--bs-ship);
+    border-right-color: var(--bs-ship-border);
+    border-bottom-color: var(--bs-ship-border);
+  }
+
+  &.cellSunk {
+    background: var(--bs-sunk);
+    border-right-color: var(--bs-sunk-border);
+    border-bottom-color: var(--bs-sunk-border);
+  }
+
+  &.cellMiss {
+    background: var(--bs-miss);
+    border-right-color: var(--bs-miss-border);
+    border-bottom-color: var(--bs-miss-border);
+  }
+
+  &.cellHit {
+    background: var(--bs-hit);
+    border-right-color: var(--bs-hit-border);
+    border-bottom-color: var(--bs-hit-border);
+  }
+
+  &.cellGhostOk {
+    background: var(--bs-ghost-ok);
+  }
+
+  &.cellGhostBad {
+    background: var(--bs-ghost-bad);
+  }
+
+  &.cellRadarArea {
+    background: var(--bs-radar);
+  }
+
+  &.cellModeHover {
+    background: var(--bs-strike-hover);
+  }
+
+  &.cellMine {
+    background: var(--bs-mine);
+    border-right-color: var(--bs-mine-border);
+    border-bottom-color: var(--bs-mine-border);
+  }
+}
+
+// Cursor per mode
+.modeshoot .cell:not(.cellMiss):not(.cellHit):not(.cellSunk) {
+  cursor: crosshair;
+}
+
+.moderadar .cell {
+  cursor: zoom-in;
+}
+
+.modeairstrikeh .cell,
+.modeairstrikev .cell {
+  cursor: crosshair;
+}
+
+.modemine .cell:not(.cellShip):not(.cellMine):not(.cellMiss):not(.cellHit) {
+  cursor: cell;
+}
+
+// Hit/Miss markers via pseudo-elements
+.cell.cellMiss::after {
+  content: '·';
+  font-size: 18px;
+  color: oklch(0.55 0.04 228);
+  line-height: 1;
+}
+
+:global(.dark) .cell.cellMiss::after {
+  color: oklch(0.55 0.04 228);
+}
+
+.cell.cellHit::after,
+.cell.cellSunk::after {
+  content: '×';
+  font-size: 15px;
+  font-weight: 700;
+  color: oklch(0.98 0 0);
+  line-height: 1;
+}
+
+// Mine glyph
+.mineGlyph {
+  font-size: 14px;
+  line-height: 1;
+}
+
+// Radar info badge
+.radarInfo {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  @include m.mono(9px, 0);
+  line-height: 1.3;
+  color: var(--color-fg);
+  background: var(--bs-radar);
+  pointer-events: none;
+  font-size: 9px;
+}

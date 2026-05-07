@@ -1,5 +1,5 @@
 // ─────────────────────────────────────────────────────────────
-// Battleships (Куриный бой) — authoritative server.
+// Battleships (Морской бой) — authoritative server.
 //
 // All game state lives in memory; server validates every action.
 // Disconnect = forfeit for that player, opponent is notified.

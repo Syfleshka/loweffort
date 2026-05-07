@@ -3,6 +3,7 @@ import type { Cell, Orientation, Ship } from './BattleshipsTypes'
 import { COST_AIRSTRIKE, COST_MINE, COST_RADAR } from './BattleshipsTypes'
 import type { BoardMode, RadarMark } from './BattleshipsBoard'
 import { BattleshipsBoard } from './BattleshipsBoard'
+import s from './Battleships.module.scss'
 
 type AbilityMode = 'shoot' | 'mine' | 'radar' | 'airstrike'
 
@@ -60,7 +61,7 @@ export function BattleshipsGame(props: Props) {
     return () => window.removeEventListener('keydown', onKey)
   }, [ability])
 
-  const enemyShotsSet = new Set(enemyShots.map((s) => `${s.x},${s.y}`))
+  const enemyShotsSet = new Set(enemyShots.map((sh) => `${sh.x},${sh.y}`))
 
   const enemyMode: BoardMode = gameOver
     ? 'view'
@@ -90,59 +91,59 @@ export function BattleshipsGame(props: Props) {
   }
 
   return (
-    <div className="game">
-      <div className="status-bar">
+    <div className={s.game}>
+      <div className={s.statusBar}>
         {gameOver ? (
           <strong>
             {gameOver.youWon
-              ? '🏆 Победа! Все цыплята соперника накормлены.'
-              : '😿 Поражение. Соперник раскормил всех ваших цыплят.'}
+              ? '🏆 Победа! Вы потопили весь флот соперника.'
+              : '💀 Поражение. Соперник потопил ваш флот.'}
           </strong>
         ) : (
-          <strong className={yourTurn ? 'your-turn' : 'enemy-turn'}>{status}</strong>
+          <strong className={yourTurn ? s.yourTurn : s.enemyTurn}>{status}</strong>
         )}
         {gameOver && onRematch && (
-          <button className="primary" onClick={onRematch}>Реванш</button>
+          <button className={s.btnPrimary} onClick={onRematch}>Реванш</button>
         )}
       </div>
 
       {!gameOver && (
-        <div className="shop">
-          <div className="coins" title="Зёрен">🌾 {coins}</div>
+        <div className={s.shop}>
+          <div className={s.coins} title="Монеты">🪙 {coins}</div>
           <button
-            className={`ability ${ability === 'shoot' ? 'active' : ''}`}
+            className={[s.abilityBtn, ability === 'shoot' ? s.abilityActive : ''].filter(Boolean).join(' ')}
             onClick={() => setAbility('shoot')}
-            title="Обычный выстрел кормом"
+            title="Обычный выстрел"
           >
-            🌾 Корм
+            🎯 Выстрел
           </button>
           <button
-            className={`ability ${ability === 'mine' ? 'active' : ''}`}
+            className={[s.abilityBtn, ability === 'mine' ? s.abilityActive : ''].filter(Boolean).join(' ')}
             onClick={() => setAbility((a) => (a === 'mine' ? 'shoot' : 'mine'))}
             disabled={coins < COST_MINE && ability !== 'mine'}
-            title="Установить мину на свою свободную клетку"
+            title="Установить мину на своё поле"
           >
-            🪤 Мина <span className="cost">{COST_MINE}</span>
+            💣 Мина <span className={s.cost}>{COST_MINE}</span>
           </button>
           <button
-            className={`ability ${ability === 'radar' ? 'active' : ''}`}
+            className={[s.abilityBtn, ability === 'radar' ? s.abilityActive : ''].filter(Boolean).join(' ')}
             onClick={() => setAbility((a) => (a === 'radar' ? 'shoot' : 'radar'))}
             disabled={!yourTurn || (coins < COST_RADAR && ability !== 'radar')}
-            title="Разведка 3×3 на поле соперника"
+            title="Сонар — разведка 3×3"
           >
-            📡 Радар <span className="cost">{COST_RADAR}</span>
+            📡 Сонар <span className={s.cost}>{COST_RADAR}</span>
           </button>
           <button
-            className={`ability ${ability === 'airstrike' ? 'active' : ''}`}
+            className={[s.abilityBtn, ability === 'airstrike' ? s.abilityActive : ''].filter(Boolean).join(' ')}
             onClick={() => setAbility((a) => (a === 'airstrike' ? 'shoot' : 'airstrike'))}
             disabled={!yourTurn || (coins < COST_AIRSTRIKE && ability !== 'airstrike')}
-            title="Удар по линии (R — поворот)"
+            title="Авиаудар по линии (R — поворот)"
           >
-            ✈️ Авиаудар <span className="cost">{COST_AIRSTRIKE}</span>
+            ✈️ Авиаудар <span className={s.cost}>{COST_AIRSTRIKE}</span>
           </button>
           {ability === 'airstrike' && (
             <button
-              className="rotate"
+              className={s.rotateBtn}
               onClick={() => setStrikeOrientation((o) => (o === 'h' ? 'v' : 'h'))}
             >
               {strikeOrientation === 'h' ? '→' : '↓'}
@@ -151,22 +152,22 @@ export function BattleshipsGame(props: Props) {
         </div>
       )}
 
-      {abilityError && <div className="error">{abilityError}</div>}
+      {abilityError && <div className={s.error}>{abilityError}</div>}
       {ability === 'mine' && !gameOver && (
-        <div className="info">Кликните по своей свободной клетке, чтобы поставить мину</div>
+        <div className={s.info}>Кликните по своей свободной клетке, чтобы поставить мину</div>
       )}
       {ability === 'radar' && !gameOver && (
-        <div className="info">Наведитесь на клетку соперника — радар покажет 3×3</div>
+        <div className={s.info}>Наведитесь на клетку — сонар покажет квадрат 3×3</div>
       )}
       {ability === 'airstrike' && !gameOver && (
-        <div className="info">
-          Выберите {strikeOrientation === 'h' ? 'строку' : 'столбец'} соперника. R — поворот.
+        <div className={s.info}>
+          Выберите {strikeOrientation === 'h' ? 'строку' : 'столбец'}. R — поворот направления.
         </div>
       )}
 
-      <div className="boards">
+      <div className={s.boards}>
         <BattleshipsBoard
-          title="Курятник соперника"
+          title="Море соперника"
           ships={enemyRevealedShips}
           shots={enemyShots}
           sunkCells={enemySunkCells}
@@ -180,7 +181,7 @@ export function BattleshipsGame(props: Props) {
           disabled={!yourTurn || !!gameOver || ability === 'mine'}
         />
         <BattleshipsBoard
-          title="Ваш курятник"
+          title="Ваше море"
           ships={myShips}
           shots={myShots}
           sunkCells={mySunkCells}

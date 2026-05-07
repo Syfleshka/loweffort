@@ -3,6 +3,7 @@ import type { Cell, Orientation, Ship } from './BattleshipsTypes'
 import { FLEET } from './BattleshipsTypes'
 import { randomPlacement, shipCells, validateGeometry, validatePlacement } from './BattleshipsLogic'
 import { BattleshipsBoard } from './BattleshipsBoard'
+import s from './Battleships.module.scss'
 
 interface Props {
   onReady: (ships: Ship[]) => void
@@ -23,7 +24,7 @@ export function BattleshipsPlacement({ onReady, invalidReason, waitingOpponent }
   const [hover, setHover] = useState<Cell | null>(null)
 
   const pending: PendingShip[] = useMemo(() => {
-    const used = new Set(ships.map((s) => s.id))
+    const used = new Set(ships.map((ship) => ship.id))
     return FLEET.map((size, index) => ({ size, index, used: used.has(`s${index}`) }))
   }, [ships])
 
@@ -61,11 +62,11 @@ export function BattleshipsPlacement({ onReady, invalidReason, waitingOpponent }
   }
 
   function removeShipAt(c: Cell) {
-    setShips((prev) => prev.filter((s) => !shipCells(s).some((sc) => sc.x === c.x && sc.y === c.y)))
+    setShips((prev) => prev.filter((ship) => !shipCells(ship).some((sc) => sc.x === c.x && sc.y === c.y)))
   }
 
   function handleCellClick(c: Cell) {
-    if (ships.some((s) => shipCells(s).some((sc) => sc.x === c.x && sc.y === c.y))) {
+    if (ships.some((ship) => shipCells(ship).some((sc) => sc.x === c.x && sc.y === c.y))) {
       removeShipAt(c)
     } else {
       placeAtHover()
@@ -76,49 +77,55 @@ export function BattleshipsPlacement({ onReady, invalidReason, waitingOpponent }
   const validation = allPlaced ? validatePlacement(ships) : { ok: false }
 
   return (
-    <div className="placement">
-      <div className="placement-main">
+    <div className={s.placement}>
+      <div className={s.placementMain}>
         <BattleshipsBoard
-          title="Ваш курятник"
+          title="Ваш флот"
           ships={ships}
           ghost={ghost}
           onHover={setHover}
           onClick={handleCellClick}
         />
-        <div className="placement-controls">
-          <h3>Расставьте цыплят 🐔</h3>
-          <p className="hint">
-            Кликайте по клеткам, чтобы посадить цыплёнка. <kbd>R</kbd> — поворот.
+        <div className={s.placementControls}>
+          <h3 className={s.placementHeading}>Расставьте флот</h3>
+          <p className={s.hint}>
+            Кликайте по клеткам, чтобы поставить корабль. <kbd>R</kbd> — поворот.
             Повторный клик убирает.
           </p>
-          <div className="fleet">
+          <div className={s.fleet}>
             {pending.map((p) => (
               <button
                 key={p.index}
-                className={`fleet-item ${selectedSize === p.size && !p.used ? 'selected' : ''} ${p.used ? 'used' : ''}`}
+                className={[
+                  s.fleetItem,
+                  selectedSize === p.size && !p.used ? s.fleetItemSelected : '',
+                  p.used ? s.fleetItemUsed : '',
+                ].filter(Boolean).join(' ')}
                 onClick={() => !p.used && setSelectedSize(p.size)}
                 disabled={p.used}
               >
-                {Array.from({ length: p.size }).map((_, i) => (
-                  <span key={i} className="emoji">{p.used ? '·' : '🐤'}</span>
-                ))}
-                <span className="size-label">×{p.size}</span>
+                <span className={s.fleetShip}>
+                  {Array.from({ length: p.size }).map((_, i) => (
+                    <span key={i} className={s.fleetCell} />
+                  ))}
+                </span>
+                <span className={s.fleetLabel}>×{p.size}</span>
               </button>
             ))}
           </div>
-          <div className="row">
-            <button onClick={() => setOrientation((o) => (o === 'h' ? 'v' : 'h'))}>
+          <div className={s.placementRow}>
+            <button className={s.btnSecondary} onClick={() => setOrientation((o) => (o === 'h' ? 'v' : 'h'))}>
               Поворот ({orientation === 'h' ? '→' : '↓'})
             </button>
-            <button onClick={() => setShips(randomPlacement())}>🎲 Случайно</button>
-            <button onClick={() => setShips([])}>Сброс</button>
+            <button className={s.btnSecondary} onClick={() => setShips(randomPlacement())}>🎲 Случайно</button>
+            <button className={s.btnSecondary} onClick={() => setShips([])}>Сброс</button>
           </div>
-          {invalidReason && <div className="error">{invalidReason}</div>}
+          {invalidReason && <div className={s.error}>{invalidReason}</div>}
           {waitingOpponent ? (
-            <div className="info">Ожидаем соперника…</div>
+            <div className={s.info}>Ожидаем соперника…</div>
           ) : (
             <button
-              className="primary"
+              className={s.btnPrimary}
               disabled={!allPlaced || !validation.ok}
               onClick={() => onReady(ships)}
             >

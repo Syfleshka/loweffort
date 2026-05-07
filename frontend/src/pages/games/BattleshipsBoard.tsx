@@ -2,6 +2,7 @@ import { Fragment } from 'react'
 import type { Cell, Ship } from './BattleshipsTypes'
 import { BOARD_SIZE } from './BattleshipsTypes'
 import { shipCells } from './BattleshipsLogic'
+import s from './Battleships.module.scss'
 
 export type BoardMode =
   | 'shoot'
@@ -56,9 +57,9 @@ export function BattleshipsBoard(props: BoardProps) {
 
   const sunkSet = new Set(sunkCells.map((c) => `${c.x},${c.y}`))
   const shipMap = new Map<string, { sunk: boolean }>()
-  for (const s of ships) {
-    const allHit = shipCells(s).every((c) => sunkSet.has(`${c.x},${c.y}`))
-    for (const c of shipCells(s)) shipMap.set(`${c.x},${c.y}`, { sunk: allHit })
+  for (const ship of ships) {
+    const allHit = shipCells(ship).every((c) => sunkSet.has(`${c.x},${c.y}`))
+    for (const c of shipCells(ship)) shipMap.set(`${c.x},${c.y}`, { sunk: allHit })
   }
   const shotMap = new Map<string, 'miss' | 'hit' | 'kill'>()
   for (const sh of shots) shotMap.set(`${sh.x},${sh.y}`, sh.result)
@@ -96,20 +97,22 @@ export function BattleshipsBoard(props: BoardProps) {
     }
   }
 
+  const modeClass = s[`mode${mode.replace('-', '')}`] ?? ''
+
   return (
-    <div className={`board-wrap ${highlightTurn ? 'turn' : ''}`}>
-      <div className="board-title">{title}</div>
+    <div className={[s.boardWrap, highlightTurn ? s.boardTurn : ''].filter(Boolean).join(' ')}>
+      <div className={s.boardTitle}>{title}</div>
       <div
-        className={`board ${disabled ? 'disabled' : ''} mode-${mode}`}
+        className={[s.board, disabled ? s.boardDisabled : '', modeClass].filter(Boolean).join(' ')}
         onMouseLeave={() => onHover?.(null)}
       >
-        <div className="corner" />
+        <div className={s.corner} />
         {COLS.map((l) => (
-          <div key={`col-${l}`} className="axis col">{l}</div>
+          <div key={`col-${l}`} className={s.axisCol}>{l}</div>
         ))}
         {Array.from({ length: BOARD_SIZE }, (_, y) => (
           <Fragment key={`row-${y}`}>
-            <div className="axis row">{y + 1}</div>
+            <div className={s.axisRow}>{y + 1}</div>
             {Array.from({ length: BOARD_SIZE }, (_, x) => {
               const k = `${x},${y}`
               const ship = shipMap.get(k)
@@ -120,15 +123,16 @@ export function BattleshipsBoard(props: BoardProps) {
               const inRadarArea = radarAreaSet.has(k)
               const inHover = hoverHighlight.has(k)
 
-              const classes = ['cell']
-              if (ship && !shot) classes.push('chicken')
-              if (ship?.sunk) classes.push('sunk')
-              if (shot === 'miss') classes.push('miss')
-              if (shot === 'hit' || shot === 'kill') classes.push('hit')
-              if (inGhost) classes.push(ghost!.valid ? 'ghost-ok' : 'ghost-bad')
-              if (inRadarArea) classes.push('radar-area')
-              if (inHover) classes.push('mode-hover')
-              if (hasMine && !shot) classes.push('mine')
+              const classes = [s.cell]
+              if (ship && !shot) classes.push(ship.sunk ? s.cellSunk : s.cellShip)
+              if (ship?.sunk && shot) classes.push(s.cellSunk)
+              if (shot === 'miss') classes.push(s.cellMiss)
+              if (shot === 'hit') classes.push(s.cellHit)
+              if (shot === 'kill') classes.push(s.cellSunk)
+              if (inGhost) classes.push(ghost!.valid ? s.cellGhostOk : s.cellGhostBad)
+              if (inRadarArea && !shot && !ship) classes.push(s.cellRadarArea)
+              if (inHover && !shot) classes.push(s.cellModeHover)
+              if (hasMine && !shot) classes.push(s.cellMine)
 
               return (
                 <div
@@ -137,14 +141,10 @@ export function BattleshipsBoard(props: BoardProps) {
                   onMouseEnter={() => onHover?.({ x, y })}
                   onClick={() => !disabled && onClick?.({ x, y })}
                 >
-                  {ship && !shot && <span className="emoji">🐤</span>}
-                  {shot === 'miss' && <span className="emoji">🌾</span>}
-                  {shot === 'hit' && <span className="emoji">💥</span>}
-                  {shot === 'kill' && <span className="emoji">🍗</span>}
-                  {hasMine && !shot && <span className="emoji mine-glyph">🪤</span>}
+                  {hasMine && !shot && <span className={s.mineGlyph}>💣</span>}
                   {radarCenter && (
-                    <span className="radar-info">
-                      🐤{radarCenter.ships}<br />🪤{radarCenter.mines}
+                    <span className={s.radarInfo}>
+                      🚢{radarCenter.ships}<br />💣{radarCenter.mines}
                     </span>
                   )}
                 </div>

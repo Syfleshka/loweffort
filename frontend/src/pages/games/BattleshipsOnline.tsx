@@ -5,6 +5,7 @@ import type { Cell, Orientation, Ship } from './BattleshipsTypes'
 import type { RadarMark } from './BattleshipsBoard'
 import { BattleshipsPlacement } from './BattleshipsPlacement'
 import { BattleshipsGame } from './BattleshipsGame'
+import s from './Battleships.module.scss'
 
 export type BsKickoff = 'host' | { code: string }
 
@@ -49,7 +50,6 @@ export function BattleshipsOnline({
   const [statusMsg, setStatusMsg] = useState('')
 
   const kickedOff = useRef(false)
-  // Capture phase for cleanup without causing effect re-run
   const phaseRef = useRef(phase)
   phaseRef.current = phase
 
@@ -75,7 +75,6 @@ export function BattleshipsOnline({
     setTimeout(() => setAbilityError(null), 3000)
   }
 
-  // Subscribe to server events
   useEffect(() => {
     const socket = getSocket()
 
@@ -102,7 +101,7 @@ export function BattleshipsOnline({
       setPhase('playing')
       setYourTurn(yt)
       setCoins(c)
-      setStatusMsg(yt ? 'Ваш ход — кидайте корм!' : 'Ход соперника…')
+      setStatusMsg(yt ? 'Ваш ход — открывайте огонь!' : 'Ход соперника…')
       setWaitingOpponent(false)
     }
     function onShotResult(msg: {
@@ -125,8 +124,8 @@ export function BattleshipsOnline({
       }
       if (msg.mineTriggered) {
         setStatusMsg(msg.byYou
-          ? '🪤 Вы попали в мину соперника! Пропускаете следующий ход.'
-          : '🪤 Соперник попал в вашу мину! Он пропустит следующий ход.')
+          ? '💣 Вы подорвали мину соперника! Пропускаете следующий ход.'
+          : '💣 Соперник подорвал вашу мину! Он пропустит следующий ход.')
       }
     }
     function onAirstrikeResult(msg: {
@@ -173,7 +172,7 @@ export function BattleshipsOnline({
     }
     function onTurn({ yourTurn: yt }: { yourTurn: boolean }) {
       setYourTurn(yt)
-      setStatusMsg(yt ? 'Ваш ход — кидайте корм!' : 'Ход соперника…')
+      setStatusMsg(yt ? 'Ваш ход — открывайте огонь!' : 'Ход соперника…')
     }
     function onGameOver({ youWon, opponentShips, opponentMines }: { youWon: boolean; opponentShips: Ship[]; opponentMines?: Cell[] }) {
       setGameOver({ youWon })
@@ -221,7 +220,6 @@ export function BattleshipsOnline({
     }
   }, [])
 
-  // Kick off the initial action (create/join room) exactly once
   useEffect(() => {
     if (kickedOff.current) return
     kickedOff.current = true
@@ -241,12 +239,10 @@ export function BattleshipsOnline({
         if (!res.ok) {
           setConnectError(errorText(res.error))
         }
-        // If ok, we wait for bs:opponent_joined which transitions to placement
       })
     }
   }, [kickoff])
 
-  // Cleanup on unmount — tell server we're leaving
   useEffect(() => {
     return () => {
       getSocket().emit('bs:leave')
@@ -257,51 +253,51 @@ export function BattleshipsOnline({
 
   if (connectError) {
     return (
-      <div className="bs-screen">
-        <h2>🐤 {game.title}</h2>
-        <p className="error">{connectError}</p>
-        <button onClick={onExit}>Назад</button>
+      <div className={s.screen}>
+        <h2 className={s.screenTitle}>⚓ {game.title}</h2>
+        <p className={s.screenError}>{connectError}</p>
+        <button className={s.btnSecondary} onClick={onExit}>Назад</button>
       </div>
     )
   }
 
   if (phase === 'connecting') {
     return (
-      <div className="bs-screen">
-        <h2>🐤 {game.title}</h2>
-        <p>Подключение…</p>
+      <div className={s.screen}>
+        <h2 className={s.screenTitle}>⚓ {game.title}</h2>
+        <p className={s.screenText}>Подключение…</p>
       </div>
     )
   }
 
   if (phase === 'waiting') {
     return (
-      <div className="bs-screen">
-        <h2>🐤 {game.title}</h2>
+      <div className={s.screen}>
+        <h2 className={s.screenTitle}>⚓ {game.title}</h2>
         {roomCode && (
-          <div className="room-code-block">
-            <p>Код комнаты — поделитесь с соперником:</p>
-            <code className="room-code">{roomCode}</code>
+          <div className={s.codeBlock}>
+            <p className={s.codeLabel}>Код комнаты — поделитесь с соперником</p>
+            <div className={s.code}>{roomCode}</div>
           </div>
         )}
-        <p>Ожидаем соперника…</p>
-        <button onClick={onExit}>Отмена</button>
+        <p className={s.screenText}>Ожидаем соперника…</p>
+        <button className={s.btnSecondary} onClick={onExit}>Отмена</button>
       </div>
     )
   }
 
   if (phase === 'placement' || (phase === 'playing' && myShips.length === 0)) {
     return (
-      <div className="bs-root">
-        <div className="bs-header">
-          <h2>🐤 {game.title}</h2>
+      <div className={s.root}>
+        <div className={s.header}>
+          <h2 className={s.headerTitle}>⚓ {game.title}</h2>
           {roomCode && (
-            <div className="room-info">
+            <div className={s.roomInfo}>
               Комната: <strong>{roomCode}</strong>
-              <span className={`dot ${opponentInRoom ? 'online' : 'offline'}`} />
+              <span className={[s.dot, opponentInRoom ? s.dotOnline : ''].filter(Boolean).join(' ')} />
             </div>
           )}
-          <button className="exit-btn" onClick={onExit}>Выйти</button>
+          <button className={s.exitBtn} onClick={onExit}>Выйти</button>
         </div>
         <BattleshipsPlacement
           onReady={(ships) => {
@@ -317,16 +313,16 @@ export function BattleshipsOnline({
   }
 
   return (
-    <div className="bs-root">
-      <div className="bs-header">
-        <h2>🐤 {game.title}</h2>
+    <div className={s.root}>
+      <div className={s.header}>
+        <h2 className={s.headerTitle}>⚓ {game.title}</h2>
         {roomCode && (
-          <div className="room-info">
+          <div className={s.roomInfo}>
             Комната: <strong>{roomCode}</strong>
-            <span className={`dot ${opponentInRoom ? 'online' : 'offline'}`} />
+            <span className={[s.dot, opponentInRoom ? s.dotOnline : ''].filter(Boolean).join(' ')} />
           </div>
         )}
-        <button className="exit-btn" onClick={onExit}>Выйти</button>
+        <button className={s.exitBtn} onClick={onExit}>Выйти</button>
       </div>
       <BattleshipsGame
         myShips={myShips}
