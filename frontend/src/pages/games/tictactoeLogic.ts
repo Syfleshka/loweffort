@@ -1,11 +1,8 @@
+export const BOARD_SIZE = 10
+export const WIN_COUNT = 5
+
 export type Mark = 'X' | 'O'
 export type Cell = Mark | null
-
-export const LINES: ReadonlyArray<readonly [number, number, number]> = [
-  [0, 1, 2], [3, 4, 5], [6, 7, 8],
-  [0, 3, 6], [1, 4, 7], [2, 5, 8],
-  [0, 4, 8], [2, 4, 6],
-]
 
 export interface WinResult {
   winner: Mark
@@ -13,11 +10,25 @@ export interface WinResult {
 }
 
 export function findWinner(board: Cell[]): WinResult | null {
-  for (const line of LINES) {
-    const [a, b, c] = line
-    const v = board[a]
-    if (v && v === board[b] && v === board[c]) {
-      return { winner: v, line }
+  const N = BOARD_SIZE
+  const W = WIN_COUNT
+  const dirs = [[0, 1], [1, 0], [1, 1], [1, -1]] as const
+
+  for (let r = 0; r < N; r++) {
+    for (let c = 0; c < N; c++) {
+      const v = board[r * N + c]
+      if (!v) continue
+      for (const [dr, dc] of dirs) {
+        const line: number[] = []
+        for (let k = 0; k < W; k++) {
+          const nr = r + dr * k
+          const nc = c + dc * k
+          if (nr < 0 || nr >= N || nc < 0 || nc >= N) break
+          if (board[nr * N + nc] !== v) break
+          line.push(nr * N + nc)
+        }
+        if (line.length === W) return { winner: v, line }
+      }
     }
   }
   return null
