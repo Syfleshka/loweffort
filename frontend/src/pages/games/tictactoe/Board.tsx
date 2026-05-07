@@ -66,7 +66,7 @@ function WinLine({ line }: { line: readonly number[] }) {
         x2={b.x}
         y2={b.y}
         stroke="var(--le-accent)"
-        strokeWidth="1.2"
+        strokeWidth=".6"
         strokeLinecap="round"
         pathLength="1"
         className={s.winLineStroke}

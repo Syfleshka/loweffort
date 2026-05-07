@@ -8,6 +8,8 @@
 //   client → server
 //     bs:create_room                                → cb({ ok, code? })
 //     bs:join_room      { code }                   → cb({ ok, error? })
+//     bs:random_match                               → cb({ ok, queued?, error? })
+//     bs:cancel_queue
 //     bs:ready          { ships }
 //     bs:shoot          { x, y }
 //     bs:place_mine     { x, y }
@@ -193,14 +195,14 @@ interface BsPlayer {
 
 class BsRoom {
     readonly id: string
-    readonly code: string
+    readonly code: string | null
     readonly players: BsPlayer[] = []
     private turn: string | null = null  // userId whose turn it is
     private gameStarted = false
     private gameOver = false
     private bonusTurns = new Map<string, number>()
 
-    constructor(id: string, code: string) {
+    constructor(id: string, code: string | null) {
         this.id = id
         this.code = code
     }
@@ -507,6 +509,22 @@ const rooms = new Map<string, BsRoom>()
 const codeIndex = new Map<string, string>()  // code → roomId
 const userRoom = new Map<string, string>()   // userId → roomId
 
+interface QueueEntry {
+    userId: string
+    socketId: string
+    queuedAt: number
+}
+const randomQueue: QueueEntry[] = []
+
+function removeFromQueueBySocket(socketId: string) {
+    const idx = randomQueue.findIndex((q) => q.socketId === socketId)
+    if (idx >= 0) randomQueue.splice(idx, 1)
+}
+function removeFromQueueByUser(userId: string) {
+    const idx = randomQueue.findIndex((q) => q.userId === userId)
+    if (idx >= 0) randomQueue.splice(idx, 1)
+}
+
 const CODE_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
 
 function generateCode(): string {
@@ -526,7 +544,7 @@ function cleanupRoom(roomId: string) {
     const room = rooms.get(roomId)
     if (!room) return
     if (room.isEmpty()) {
-        codeIndex.delete(room.code)
+        if (room.code) codeIndex.delete(room.code)
         rooms.delete(roomId)
     }
 }
@@ -565,10 +583,49 @@ export function registerBsHandlers(io: Server, socket: Socket) {
         if (!room) { callback({ ok: false, error: 'room_not_found' }); return }
         if (room.isFull()) { callback({ ok: false, error: 'room_full' }); return }
 
+        removeFromQueueByUser(userId)
         room.addPlayer(userId, socket.id)
         userRoom.set(userId, roomId)
         callback({ ok: true })
         room.notifyBothOpponentJoined(io)
+    })
+
+    socket.on('bs:random_match', (callback: (res: { ok: boolean; queued?: boolean; error?: string }) => void) => {
+        if (typeof callback !== 'function') return
+        if (userRoom.has(userId)) {
+            callback({ ok: false, error: 'already_in_room' })
+            return
+        }
+        // Drop any stale queue entry for this socket before pairing.
+        removeFromQueueBySocket(socket.id)
+
+        // Try to pair with someone who isn't us.
+        while (randomQueue.length > 0) {
+            const partner = randomQueue.shift()!
+            if (partner.userId === userId) continue
+            const partnerSocket = io.sockets.sockets.get(partner.socketId)
+            if (!partnerSocket) continue
+            if (userRoom.has(partner.userId)) continue
+
+            const roomId = makeRoomId()
+            const room = new BsRoom(roomId, null)
+            room.addPlayer(partner.userId, partner.socketId)
+            room.addPlayer(userId, socket.id)
+            rooms.set(roomId, room)
+            userRoom.set(partner.userId, roomId)
+            userRoom.set(userId, roomId)
+            callback({ ok: true })
+            room.notifyBothOpponentJoined(io)
+            return
+        }
+
+        // Nobody to pair with — sit in the queue.
+        randomQueue.push({ userId, socketId: socket.id, queuedAt: Date.now() })
+        callback({ ok: true, queued: true })
+    })
+
+    socket.on('bs:cancel_queue', () => {
+        removeFromQueueBySocket(socket.id)
     })
 
     socket.on('bs:ready', (payload: { ships: Ship[] }) => {
@@ -609,6 +666,7 @@ export function registerBsHandlers(io: Server, socket: Socket) {
     })
 
     socket.on('bs:leave', () => {
+        removeFromQueueBySocket(socket.id)
         const roomId = userRoom.get(userId)
         if (!roomId) return
         const room = rooms.get(roomId)
@@ -618,6 +676,7 @@ export function registerBsHandlers(io: Server, socket: Socket) {
     })
 
     socket.on('disconnect', () => {
+        removeFromQueueBySocket(socket.id)
         const roomId = userRoom.get(userId)
         if (!roomId) return
         const room = rooms.get(roomId)

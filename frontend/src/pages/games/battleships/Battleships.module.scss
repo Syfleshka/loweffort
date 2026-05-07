@@ -2,12 +2,13 @@
 @use '../../../styles/mixins' as m;
 
 // ── Sea palette + root layout ────────────────────────────────────
+// Page background is provided by .palette-sea (see global.scss).
+// Cell colors below contrast against that bg so the grid stays legible.
 .root {
-  // Sea-specific CSS variables (light mode)
   --bs-cell: 34px;
-  --bs-water: oklch(0.92 0.028 222);
-  --bs-water-border: oklch(0.83 0.035 222);
-  --bs-water-hover: oklch(0.86 0.038 222);
+  --bs-water: oklch(0.97 0.025 215);
+  --bs-water-border: oklch(0.82 0.05 215);
+  --bs-water-hover: oklch(0.92 0.04 215);
   --bs-ship: oklch(0.68 0 0);
   --bs-ship-border: oklch(0.52 0 0);
   --bs-sunk: oklch(0.45 0.1 22);
@@ -31,9 +32,9 @@
 }
 
 :global(.dark) .root {
-  --bs-water: oklch(0.27 0.03 228);
-  --bs-water-border: oklch(0.34 0.04 228);
-  --bs-water-hover: oklch(0.32 0.04 228);
+  --bs-water: oklch(0.32 0.07 245);
+  --bs-water-border: oklch(0.42 0.07 245);
+  --bs-water-hover: oklch(0.38 0.075 245);
   --bs-ship: oklch(0.42 0 0);
   --bs-ship-border: oklch(0.32 0 0);
   --bs-sunk: oklch(0.35 0.1 22);
@@ -147,40 +148,85 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: t.$space-8;
-  max-width: 500px;
+  gap: t.$space-9;
   width: 100%;
-  padding: t.$space-6 0;
+}
+
+.lobbyHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: t.$space-4;
+  width: 100%;
+  max-width: 640px;
   text-align: center;
 }
 
 .lobbyTitle {
   margin: 0;
   @include m.serif(t.$fs-44, 500, t.$tracking-tight-md, 1.05);
+
+  @include m.mobile {
+    font-size: t.$fs-36;
+  }
 }
 
 .tagline {
   margin: 0;
-  @include m.mono(t.$fs-13, t.$tracking-mono);
-  color: var(--color-fg-2);
-}
-
-.lobbyCard {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
-  gap: t.$space-5;
-  width: 100%;
-  padding: t.$space-7;
-  border: 1px solid var(--color-line);
-  border-radius: t.$radius-sm;
-  background: var(--color-bg-2);
-}
-
-.divider {
   @include m.mono(t.$fs-11, t.$tracking-mono);
   color: var(--color-fg-3);
-  text-align: center;
+}
+
+.modeList {
+  display: flex;
+  flex-direction: column;
+  gap: t.$space-4;
+  width: 100%;
+  max-width: 420px;
+}
+
+.modeCard {
+  @include m.button-reset;
+  display: flex;
+  flex-direction: column;
+  gap: t.$space-2;
+  text-align: left;
+  padding: t.$space-5 t.$space-6;
+  border: 1px solid var(--color-line);
+  border-radius: t.$radius-sm;
+  background: var(--color-bg);
+  transition:
+    border-color t.$dur-quick,
+    background t.$dur-quick;
+
+  &:hover,
+  &:focus-visible {
+    background: var(--color-bg-2);
+    border-color: var(--color-line-2);
+  }
+}
+
+.modeCardTitle {
+  @include m.serif(t.$fs-20, 500, t.$tracking-tight-xs, t.$lh-snug);
+  color: var(--color-fg);
+}
+
+.modeCardHint {
+  @include m.mono(t.$fs-11, t.$tracking-mono);
+  color: var(--color-fg-3);
+}
+
+.joinForm {
+  display: flex;
+  flex-direction: column;
+  gap: t.$space-3;
+  width: 100%;
+  max-width: 420px;
+}
+
+.joinLabel {
+  @include m.mono(t.$fs-11, t.$tracking-mono);
+  color: var(--color-fg-3);
 }
 
 .joinRow {
@@ -214,12 +260,40 @@
   }
 }
 
+.joinBtn {
+  @include m.button-reset;
+  padding: 0 t.$space-6;
+  border: 1px solid var(--color-fg);
+  border-radius: t.$radius-sm;
+  background: transparent;
+  color: var(--color-fg);
+  font-family: t.$font-mono;
+  font-size: t.$fs-13;
+  text-transform: lowercase;
+  cursor: pointer;
+  transition:
+    background t.$dur-quick,
+    color t.$dur-quick,
+    opacity t.$dur-quick;
+
+  &:hover:not(:disabled) {
+    background: var(--color-fg);
+    color: var(--color-bg);
+  }
+
+  &:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+}
+
 .rules {
   width: 100%;
-  text-align: left;
+  max-width: 420px;
   border: 1px solid var(--color-line);
   border-radius: t.$radius-sm;
   padding: t.$space-6;
+  text-align: left;
 }
 
 .rulesTitle {

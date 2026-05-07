@@ -8,7 +8,7 @@ import { BattleshipsPlacement } from './Placement'
 import { BattleshipsGame } from './Game'
 import s from './Battleships.module.scss'
 
-export type BsKickoff = 'host' | { code: string }
+export type BsKickoff = 'host' | 'random' | { code: string }
 
 type Phase = 'connecting' | 'waiting' | 'placement' | 'playing' | 'gameOver'
 
@@ -239,6 +239,17 @@ export function BattleshipsOnline({
         setRoomCode(res.code ?? null)
         setPhase('waiting')
       })
+    } else if (kickoff === 'random') {
+      socket.emit('bs:random_match', (res: { ok: boolean; queued?: boolean; error?: string }) => {
+        if (!res.ok) {
+          setConnectError(errorText(res.error))
+          return
+        }
+        // Either we just got paired (opponent_joined will arrive) or we sit in
+        // the queue. Either way, show the waiting screen — paired flow flips
+        // the phase to placement when bs:opponent_joined fires.
+        if (res.queued) setPhase('waiting')
+      })
     } else {
       socket.emit('bs:join_room', { code: kickoff.code }, (res: { ok: boolean; error?: string }) => {
         if (!res.ok) {
@@ -250,6 +261,7 @@ export function BattleshipsOnline({
 
   useEffect(() => {
     return () => {
+      getSocket().emit('bs:cancel_queue')
       getSocket().emit('bs:leave')
     }
   }, [])
@@ -259,7 +271,7 @@ export function BattleshipsOnline({
   if (connectError) {
     return (
       <div className={s.screen}>
-        <h2 className={s.screenTitle}>⚓ {game.title}</h2>
+        <h2 className={s.screenTitle}>{game.title}</h2>
         <p className={s.screenError}>{connectError}</p>
         <button className={s.btnSecondary} onClick={onExit}>Назад</button>
       </div>
@@ -269,7 +281,7 @@ export function BattleshipsOnline({
   if (phase === 'connecting') {
     return (
       <div className={s.screen}>
-        <h2 className={s.screenTitle}>⚓ {game.title}</h2>
+        <h2 className={s.screenTitle}>{game.title}</h2>
         <p className={s.screenText}>Подключение…</p>
       </div>
     )
@@ -278,14 +290,18 @@ export function BattleshipsOnline({
   if (phase === 'waiting') {
     return (
       <div className={s.screen}>
-        <h2 className={s.screenTitle}>⚓ {game.title}</h2>
-        {roomCode && (
-          <div className={s.codeBlock}>
-            <p className={s.codeLabel}>Код комнаты — поделитесь с соперником</p>
-            <div className={s.code}>{roomCode}</div>
-          </div>
+        <h2 className={s.screenTitle}>{game.title}</h2>
+        {roomCode ? (
+          <>
+            <div className={s.codeBlock}>
+              <p className={s.codeLabel}>Код комнаты — поделитесь с соперником</p>
+              <div className={s.code}>{roomCode}</div>
+            </div>
+            <p className={s.screenText}>Ожидаем соперника…</p>
+          </>
+        ) : (
+          <p className={s.screenText}>Ищем соперника…</p>
         )}
-        <p className={s.screenText}>Ожидаем соперника…</p>
         <button className={s.btnSecondary} onClick={onExit}>Отмена</button>
       </div>
     )
@@ -295,7 +311,7 @@ export function BattleshipsOnline({
     return (
       <div className={s.root}>
         <div className={s.header}>
-          <h2 className={s.headerTitle}>⚓ {game.title}</h2>
+          <h2 className={s.headerTitle}>{game.title}</h2>
           {roomCode && (
             <div className={s.roomInfo}>
               Комната: <strong>{roomCode}</strong>
@@ -320,7 +336,7 @@ export function BattleshipsOnline({
   return (
     <div className={s.root}>
       <div className={s.header}>
-        <h2 className={s.headerTitle}>⚓ {game.title}</h2>
+        <h2 className={s.headerTitle}>{game.title}</h2>
         {roomCode && (
           <div className={s.roomInfo}>
             Комната: <strong>{roomCode}</strong>

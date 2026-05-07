@@ -25,6 +25,24 @@
   --color-line-2: oklch(0.42 0 0);
 }
 
+// ── Game palettes ────────────────────────────────────────────
+// Applied by `usePalette('<name>')` to <html>. Header/footer/main consume
+// these CSS vars, so palette overrides cascade to the whole page.
+
+.palette-sea {
+  --color-bg: oklch(0.93 0.04 215);
+  --color-bg-2: oklch(0.89 0.045 215);
+  --color-line: oklch(0.80 0.05 215);
+  --color-line-2: oklch(0.72 0.055 215);
+}
+
+.dark.palette-sea {
+  --color-bg: oklch(0.21 0.07 250);
+  --color-bg-2: oklch(0.27 0.075 250);
+  --color-line: oklch(0.36 0.06 250);
+  --color-line-2: oklch(0.46 0.065 250);
+}
+
 // ── Reset ────────────────────────────────────────────────────
 *,
 *::before,
