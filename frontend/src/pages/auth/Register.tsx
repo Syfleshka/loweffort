@@ -1,16 +1,16 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Layout } from '../components/Layout'
-import { Field } from '../components/Field'
-import { useApp } from '../lib/appContext'
-import { t } from '../lib/i18n'
+import { Layout } from '../../components/Layout'
+import { Field } from '../../components/Field'
+import { useApp } from '../../lib/appContext'
+import { t } from '../../lib/i18n'
 import {
   classifyAuthError,
   EMAIL_RE,
   MIN_PASSWORD_LENGTH,
   register,
   USERNAME_RE,
-} from '../lib/auth'
+} from '../../lib/auth'
 import s from './Auth.module.scss'
 
 interface FieldErrors {

@@ -1,4 +1,4 @@
-import { BOARD_SIZE, type Cell, type Mark } from './tictactoeLogic'
+import { BOARD_SIZE, type Cell, type Mark } from './logic'
 import s from './TicTacToe.module.scss'
 
 interface BoardProps {

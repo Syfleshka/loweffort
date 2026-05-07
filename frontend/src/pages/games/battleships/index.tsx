@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import type { Game } from '../../types'
-import { BattleshipsOnline, type BsKickoff } from './BattleshipsOnline'
+import type { Game } from '../../../types'
+import { BattleshipsOnline, type BsKickoff } from './Online'
 import s from './Battleships.module.scss'
 
 type Mode = { kind: 'select' } | { kind: 'online'; kickoff: BsKickoff }

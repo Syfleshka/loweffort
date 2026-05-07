@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import type { Game } from '../../types'
-import { useApp } from '../../lib/appContext'
-import { t } from '../../lib/i18n'
-import { Board } from './TicTacToeBoard'
-import { findWinner, type Cell, type Mark } from './tictactoeLogic'
+import type { Game } from '../../../types'
+import { useApp } from '../../../lib/appContext'
+import { t } from '../../../lib/i18n'
+import { Board } from './Board'
+import { findWinner, type Cell, type Mark } from './logic'
 import s from './TicTacToe.module.scss'
 
 interface Stats {

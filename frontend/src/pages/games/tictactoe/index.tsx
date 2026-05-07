@@ -1,11 +1,11 @@
 import { useState } from 'react'
-import type { Game } from '../../types'
-import { useApp } from '../../lib/appContext'
-import { t } from '../../lib/i18n'
-import { TicTacToeLocal } from './TicTacToeLocal'
-import { TicTacToeOnline, type OnlineKickoff } from './TicTacToeOnline'
+import type { Game } from '../../../types'
+import { useApp } from '../../../lib/appContext'
+import { t } from '../../../lib/i18n'
+import { TicTacToeLocal } from './Local'
+import { TicTacToeOnline, type OnlineKickoff } from './Online'
 import s from './TicTacToe.module.scss'
-import o from './TicTacToeOnline.module.scss'
+import o from './Online.module.scss'
 
 type Mode =
   | { kind: 'select' }
