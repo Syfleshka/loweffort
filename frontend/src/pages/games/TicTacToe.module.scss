@@ -40,10 +40,11 @@
 
 .board {
   width: 100%;
-  max-width: 360px;
+  max-width: 500px;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(10, 1fr);
   border: 1px solid var(--color-line);
+  touch-action: none;
 }
 
 .cell {
@@ -58,13 +59,10 @@
   cursor: pointer;
   transition: background-color t.$dur-quick;
 
-  &:nth-child(3n):not(:nth-child(9)) {
-    border-right: 0;
-  }
-  &:not(:nth-child(3n)) {
+  &:not(:nth-child(10n)) {
     border-right: 1px solid var(--color-line);
   }
-  &:nth-child(-n + 6) {
+  &:nth-child(-n + 90) {
     border-bottom: 1px solid var(--color-line);
   }
 

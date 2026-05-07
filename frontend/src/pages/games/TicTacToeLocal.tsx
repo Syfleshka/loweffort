@@ -12,7 +12,7 @@ interface Stats {
   draw: number
 }
 
-const EMPTY_BOARD: Cell[] = Array(9).fill(null)
+const EMPTY_BOARD: Cell[] = Array(100).fill(null)
 const ZERO_STATS: Stats = { X: 0, O: 0, draw: 0 }
 
 export function TicTacToeLocal({ game, onExit }: { game: Game; onExit: () => void }) {
