@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
-import type { Game } from '../../types'
-import { useApp } from '../../lib/appContext'
-import { t, type StringKey } from '../../lib/i18n'
-import { getSocket } from '../../lib/socket'
-import { Board } from './TicTacToeBoard'
-import type { Cell, Mark } from './tictactoeLogic'
+import type { Game } from '../../../types'
+import { useApp } from '../../../lib/appContext'
+import { t, type StringKey } from '../../../lib/i18n'
+import { getSocket } from '../../../lib/socket'
+import { Board } from './Board'
+import type { Cell, Mark } from './logic'
 import s from './TicTacToe.module.scss'
-import o from './TicTacToeOnline.module.scss'
+import o from './Online.module.scss'
 
 export type OnlineKickoff = 'host' | 'random' | { code: string }
 

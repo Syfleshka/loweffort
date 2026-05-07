@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { Layout } from '../components/Layout'
-import { Field } from '../components/Field'
-import { useApp } from '../lib/appContext'
-import { t } from '../lib/i18n'
-import { classifyAuthError, login } from '../lib/auth'
+import { Layout } from '../../components/Layout'
+import { Field } from '../../components/Field'
+import { useApp } from '../../lib/appContext'
+import { t } from '../../lib/i18n'
+import { classifyAuthError, login } from '../../lib/auth'
 import s from './Auth.module.scss'
 
 interface FieldErrors {

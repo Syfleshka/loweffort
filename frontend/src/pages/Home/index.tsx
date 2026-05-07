@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
-import type { Game } from '../types'
-import { fetchGames } from '../lib/api'
-import { useApp } from '../lib/appContext'
-import { t } from '../lib/i18n'
-import { Layout } from '../components/Layout'
-import { GameCard, GameCardSkeleton } from '../components/GameCard'
-import { StatusNote } from '../components/StatusNote'
+import type { Game } from '../../types'
+import { fetchGames } from '../../lib/api'
+import { useApp } from '../../lib/appContext'
+import { t } from '../../lib/i18n'
+import { Layout } from '../../components/Layout'
+import { GameCard, GameCardSkeleton } from '../../components/GameCard'
+import { StatusNote } from '../../components/StatusNote'
 import s from './Home.module.scss'
 
 export default function Home() {

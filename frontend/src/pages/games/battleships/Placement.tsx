@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
-import type { Cell, Orientation, Ship } from './BattleshipsTypes'
-import { FLEET } from './BattleshipsTypes'
-import { randomPlacement, shipCells, validateGeometry, validatePlacement } from './BattleshipsLogic'
-import { BattleshipsBoard } from './BattleshipsBoard'
+import type { Cell, Orientation, Ship } from './types'
+import { FLEET } from './types'
+import { randomPlacement, shipCells, validateGeometry, validatePlacement } from './logic'
+import { BattleshipsBoard } from './Board'
 import s from './Battleships.module.scss'
 
 interface Props {

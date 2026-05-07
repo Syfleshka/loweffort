@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
-import type { Game } from '../../types'
-import { useApp } from '../../lib/appContext'
-import { getSocket } from '../../lib/socket'
-import type { Cell, Orientation, Ship } from './BattleshipsTypes'
-import type { RadarMark } from './BattleshipsBoard'
-import { BattleshipsPlacement } from './BattleshipsPlacement'
-import { BattleshipsGame } from './BattleshipsGame'
+import type { Game } from '../../../types'
+import { useApp } from '../../../lib/appContext'
+import { getSocket } from '../../../lib/socket'
+import type { Cell, Orientation, Ship } from './types'
+import type { RadarMark } from './Board'
+import { BattleshipsPlacement } from './Placement'
+import { BattleshipsGame } from './Game'
 import s from './Battleships.module.scss'
 
 export type BsKickoff = 'host' | { code: string }
