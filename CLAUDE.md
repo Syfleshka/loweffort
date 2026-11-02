@@ -1,6 +1,6 @@
 # Gamesite (`loweffort`) — Игровой портал
 
-GitHub: [Syfleshka/loweffort](https://github.com/Syfleshka/loweffort) · Прод: https://loweffort.site
+GitHub: [Syfleshka/loweffort](https://github.com/Syfleshka/loweffort) · Прод: https://loweffort.site, https://meduim.fun
 
 ## Описание
 Сайт для веб-игр с поддержкой одиночного и мультиплеерного режима.
@@ -22,11 +22,21 @@ GitHub: [Syfleshka/loweffort](https://github.com/Syfleshka/loweffort) · Про�
 - PostgreSQL — база данных
 
 ### Инфраструктура (VPS)
-- VPS `185.221.154.105`, домен `loweffort.site`, проект клонирован в `/home/deploy/loweffort`
+Два сервера, оба получают один и тот же `main` (см. [Деплой](#деплой)).
+
+`loweffort.site`:
+- VPS `185.221.154.105`, проект клонирован в `/home/deploy/loweffort`
 - Nginx — reverse proxy + раздача статики, конфиг в `/etc/nginx/sites-available/default`
 - PM2 — process manager (запускает бэкенд из [backend/ecosystem.config.cjs](backend/ecosystem.config.cjs))
 - Let's Encrypt — HTTPS (managed by Certbot)
 - Node.js через nvm у пользователя `deploy`
+
+`meduim.fun`:
+- VPS `77.90.169.147` (Debian 13), проект в `/home/deploy/loweffort`
+- Nginx — конфиг `/etc/nginx/sites-available/meduim.fun`
+- PM2 — systemd-юнит `pm2-deploy`
+- Let's Encrypt — acme.sh (webroot)
+- Node.js 20 из apt (Debian), не nvm
 
 ## Структура репозитория
 
@@ -200,9 +210,10 @@ Auth handshake берёт session cookie и валидирует через bett
 ```
 git push origin main
         ↓
-GitHub Actions (.github/workflows/deploy.yml)
+GitHub Actions (.github/workflows/deploy.yml), matrix по серверам
         ↓
-SSH deploy@185.221.154.105 (ключ из секрета DEPLOY_SSH_KEY)
+SSH deploy@185.221.154.105 (секрет DEPLOY_SSH_KEY)
+SSH deploy@77.90.169.147   (секрет DEPLOY_SSH_KEY_MEDUIM, host key проверяется по fingerprint)
         ↓
 bash /home/deploy/loweffort/deploy/deploy.sh
    • git fetch + reset --hard origin/main
@@ -212,8 +223,10 @@ bash /home/deploy/loweffort/deploy/deploy.sh
    • chmod o+rX на frontend/dist (для www-data)
    • pm2 reload loweffort-api (zero-downtime)
         ↓
-https://loweffort.site обновлён
+https://loweffort.site и https://meduim.fun обновлены
 ```
+
+Сервера деплоятся параллельно, падение одного не отменяет другой (`fail-fast: false`). Ручной запуск (Actions → Deploy to VPS → Run workflow) умеет деплоить на один сервер: поле `target`.
 
 ### Артефакты деплоя
 - [deploy/bootstrap.sh](deploy/bootstrap.sh) — одноразовая первичная настройка на сервере
@@ -229,8 +242,11 @@ https://loweffort.site обновлён
 - Глянуть Nginx: `sudo tail -f /var/log/nginx/error.log`
 - Поправить конфиг Nginx: `sudo nano /etc/nginx/sites-available/default`, потом `sudo nginx -t && sudo systemctl reload nginx`
 
+На `meduim.fun` конфиг Nginx: `/etc/nginx/sites-available/meduim.fun`.
+
 ### GitHub Secrets
 - `DEPLOY_SSH_KEY` — приватный SSH-ключ для входа от имени `deploy@185.221.154.105`. Публичная пара лежит в `~deploy/.ssh/authorized_keys` на VPS.
+- `DEPLOY_SSH_KEY_MEDUIM` — приватный SSH-ключ для `deploy@77.90.169.147`. На сервере ключ может только запустить `deploy/deploy.sh`.
 
 ## Соглашения
 
