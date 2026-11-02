@@ -4,6 +4,12 @@ on:
   push:
     branches: [main]
   workflow_dispatch:  # ручной запуск из GitHub UI (вкладка Actions)
+    inputs:
+      target:
+        description: Куда деплоить
+        type: choice
+        options: [all, loweffort.site, meduim.fun]
+        default: all
 
 concurrency:
   # Если прилетел новый push, пока идёт предыдущий деплой —
@@ -13,14 +19,31 @@ concurrency:
 
 jobs:
   deploy:
+    name: deploy (${{ matrix.name }})
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    strategy:
+      # Упавший деплой на одном сервере не отменяет деплой на другом.
+      fail-fast: false
+      matrix:
+        include:
+          - name: loweffort.site
+            host: 185.221.154.105
+            key: DEPLOY_SSH_KEY
+            fingerprint: ''
+          - name: meduim.fun
+            host: 77.90.169.147
+            key: DEPLOY_SSH_KEY_MEDUIM
+            # SHA256 host-ключа сервера: ssh-keygen -lf /etc/ssh/ssh_host_ecdsa_key.pub
+            fingerprint: 'SHA256:Qw04nBAEH6deyfzd9KpfTWSmOrt1JEpwHG20pRvCymM'
     steps:
       - name: SSH and run deploy.sh
+        if: github.event_name != 'workflow_dispatch' || inputs.target == 'all' || inputs.target == matrix.name
         uses: appleboy/ssh-action@v1.2.0
         with:
-          host: 185.221.154.105
+          host: ${{ matrix.host }}
           username: deploy
-          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          key: ${{ secrets[matrix.key] }}
+          fingerprint: ${{ matrix.fingerprint }}
           script_stop: true  # упасть на первой ошибке
           script: bash /home/deploy/loweffort/deploy/deploy.sh

@@ -2,7 +2,7 @@
 
 Веб-сайт с играми (одиночка + мультиплеер): авторизация, лидерборды, комнаты, профили.
 
-**Прод:** [loweffort.site](https://loweffort.site)
+**Прод:** [loweffort.site](https://loweffort.site) · [meduim.fun](https://meduim.fun)
 
 ## Стек (TL;DR)
 
@@ -49,7 +49,7 @@ Vite проксирует `/api` и `/socket.io` на бэкенд автома�
 
 ## Деплой
 
-`git push origin main` → GitHub Actions → SSH на VPS → [deploy/deploy.sh](deploy/deploy.sh) → PM2 reload.
+`git push origin main` → GitHub Actions → SSH на оба VPS (loweffort.site, meduim.fun) → [deploy/deploy.sh](deploy/deploy.sh) → PM2 reload.
 
 Детали (bootstrap сервера, секреты, ручные операции) — в [CLAUDE.md → Деплой](CLAUDE.md#деплой).
 
