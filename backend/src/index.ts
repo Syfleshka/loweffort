@@ -112,4 +112,4 @@ const io = new Server(app.server, {
 setupSocketServer(io)
 
 const port = Number(process.env.PORT) || 3000
-await app.listen({ port, host: '0.0.0.0' })
+await app.listen({ port, host: '127.0.0.1' })

@@ -22,6 +22,7 @@ fi
 PROJECT_DIR="${PROJECT_DIR:-/home/deploy/loweffort}"
 BRANCH="${BRANCH:-main}"
 PM2_APP="loweffort-api"
+export NODE_OPTIONS="${NODE_OPTIONS:---max-old-space-size=512}"
 
 cd "$PROJECT_DIR"
 

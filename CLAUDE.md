@@ -32,11 +32,11 @@ GitHub: [Syfleshka/loweffort](https://github.com/Syfleshka/loweffort) · Про�
 - Node.js через nvm у пользователя `deploy`
 
 `meduim.fun`:
-- VPS `77.90.169.147` (Debian 13), проект в `/home/deploy/loweffort`
-- Nginx — конфиг `/etc/nginx/sites-available/meduim.fun`
+- VPS `109.120.154.194` (Debian 12), проект в `/home/deploy/loweffort`
+- Nginx — конфиг `/etc/nginx/sites-available/meduim.fun.conf`, decoy target на `127.0.0.1:8444`
 - PM2 — systemd-юнит `pm2-deploy`
 - Let's Encrypt — acme.sh (webroot)
-- Node.js 20 из apt (Debian), не nvm
+- Node.js 22 из apt (NodeSource), не nvm
 
 ## Структура репозитория
 
@@ -213,7 +213,7 @@ git push origin main
 GitHub Actions (.github/workflows/deploy.yml), matrix по серверам
         ↓
 SSH deploy@185.221.154.105 (секрет DEPLOY_SSH_KEY)
-SSH deploy@77.90.169.147   (секрет DEPLOY_SSH_KEY_MEDUIM, host key проверяется по fingerprint)
+SSH deploy@109.120.154.194   (секрет DEPLOY_SSH_KEY_MEDUIM, host key проверяется по fingerprint)
         ↓
 bash /home/deploy/loweffort/deploy/deploy.sh
    • git fetch + reset --hard origin/main
@@ -242,11 +242,11 @@ https://loweffort.site и https://meduim.fun обновлены
 - Глянуть Nginx: `sudo tail -f /var/log/nginx/error.log`
 - Поправить конфиг Nginx: `sudo nano /etc/nginx/sites-available/default`, потом `sudo nginx -t && sudo systemctl reload nginx`
 
-На `meduim.fun` конфиг Nginx: `/etc/nginx/sites-available/meduim.fun`.
+На `meduim.fun` конфиг Nginx: `/etc/nginx/sites-available/meduim.fun.conf`.
 
 ### GitHub Secrets
 - `DEPLOY_SSH_KEY` — приватный SSH-ключ для входа от имени `deploy@185.221.154.105`. Публичная пара лежит в `~deploy/.ssh/authorized_keys` на VPS.
-- `DEPLOY_SSH_KEY_MEDUIM` — приватный SSH-ключ для `deploy@77.90.169.147`. На сервере ключ может только запустить `deploy/deploy.sh`.
+- `DEPLOY_SSH_KEY_MEDUIM` — приватный SSH-ключ для `deploy@109.120.154.194`. На сервере ключ может только запустить `deploy/deploy.sh`.
 
 ## Соглашения
 
